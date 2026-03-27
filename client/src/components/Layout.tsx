@@ -1,13 +1,14 @@
 /*
- * Layout Component — The Oracle Lover
- * Design: Warm domestic tableau. Navigation feels like a table of contents.
- * Font: Space Mono for nav (editorial, slightly quirky)
- * Colors: Cream bg, plum text, copper accents
+ * Layout — Sacred Warmth design
+ * Warm cream background, golden accents, elegant serif navigation
+ * Cormorant Garamond headings, Outfit body text
  */
+import { ReactNode, useState, useEffect } from "react";
 import { Link, useLocation } from "wouter";
-import { useState } from "react";
-import { Menu, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { Menu, X } from "lucide-react";
+
+const MANDALA_URL = "https://d2xsxph8kpxj0f.cloudfront.net/310519663309220512/gmij7LjAnhSeEKhviVH9SQ/golden-mandala-nHw5UU8ArX4swxcUEgwBqh.webp";
 
 const navLinks = [
   { href: "/", label: "Home" },
@@ -18,155 +19,233 @@ const navLinks = [
   { href: "/connect", label: "Connect" },
 ];
 
-export default function Layout({ children }: { children: React.ReactNode }) {
+function NavLink({ href, label, onClick }: { href: string; label: string; onClick?: () => void }) {
   const [location] = useLocation();
-  const [mobileOpen, setMobileOpen] = useState(false);
+  const isActive = href === "/" ? location === "/" : location.startsWith(href);
 
   return (
-    <div className="min-h-screen flex flex-col" style={{ background: '#FFF8EE' }}>
-      {/* Navigation */}
-      <header className="sticky top-0 z-50" style={{ background: 'rgba(255, 248, 238, 0.95)', backdropFilter: 'blur(8px)' }}>
-        <nav className="container flex items-center justify-between py-4">
-          {/* Logo */}
-          <Link href="/" className="no-underline hover:no-underline">
+    <Link
+      href={href}
+      onClick={onClick}
+      className={`relative text-[0.8rem] tracking-[0.15em] uppercase transition-colors duration-300 ${
+        isActive
+          ? "text-plum"
+          : "text-plum-deep/70 hover:text-plum"
+      }`}
+      style={{ fontFamily: "var(--font-body)", fontWeight: 500 }}
+    >
+      {label}
+      {isActive && (
+        <motion.span
+          layoutId="nav-underline"
+          className="absolute -bottom-1 left-0 right-0 h-[2px] rounded-full"
+          style={{ background: "oklch(0.78 0.14 75)" }}
+          transition={{ type: "spring", stiffness: 380, damping: 30 }}
+        />
+      )}
+    </Link>
+  );
+}
+
+export default function Layout({ children }: { children: ReactNode }) {
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const [location] = useLocation();
+
+  useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 40);
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  useEffect(() => {
+    setMobileOpen(false);
+    window.scrollTo(0, 0);
+  }, [location]);
+
+  return (
+    <div className="min-h-screen flex flex-col" style={{ background: "oklch(0.96 0.02 80)" }}>
+      {/* Header */}
+      <header
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
+          scrolled
+            ? "py-3 backdrop-blur-xl"
+            : "py-5"
+        }`}
+        style={{
+          background: scrolled
+            ? "oklch(0.96 0.02 80 / 0.92)"
+            : "transparent",
+          borderBottom: scrolled ? "1px solid oklch(0.78 0.14 75 / 0.15)" : "none",
+        }}
+      >
+        <div className="container flex items-center justify-between">
+          <Link href="/" className="flex items-center gap-3 group">
             <span
-              className="font-semibold tracking-tight"
+              className="text-2xl lg:text-[1.7rem] tracking-tight transition-colors duration-300"
               style={{
                 fontFamily: "var(--font-display)",
-                fontSize: '1.25rem',
-                color: '#4A2040',
+                fontWeight: 600,
+                color: "oklch(0.35 0.12 320)",
               }}
             >
               The Oracle Lover
             </span>
           </Link>
 
-          {/* Desktop Nav */}
-          <div className="hidden md:flex items-center gap-8">
+          {/* Desktop nav */}
+          <nav className="hidden lg:flex items-center gap-8">
             {navLinks.map((link) => (
-              <Link key={link.href} href={link.href}>
-                <span
-                  className="nav-font transition-colors duration-200"
-                  style={{
-                    color: location === link.href ? '#B87333' : '#4A2040',
-                    textDecoration: 'none',
-                    borderBottom: location === link.href ? '2px solid #B87333' : '2px solid transparent',
-                    paddingBottom: '2px',
-                  }}
-                >
-                  {link.label}
-                </span>
-              </Link>
+              <NavLink key={link.href} href={link.href} label={link.label} />
             ))}
-          </div>
+          </nav>
 
-          {/* Mobile Menu Button */}
+          {/* Mobile menu button */}
           <button
-            className="md:hidden p-2"
             onClick={() => setMobileOpen(!mobileOpen)}
+            className="lg:hidden p-2 rounded-lg transition-colors"
+            style={{ color: "oklch(0.35 0.12 320)" }}
             aria-label="Toggle menu"
-            style={{ color: '#4A2040' }}
           >
             {mobileOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
-        </nav>
+        </div>
 
-        {/* Mobile Nav */}
+        {/* Mobile nav */}
         <AnimatePresence>
           {mobileOpen && (
-            <motion.div
+            <motion.nav
               initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
+              animate={{ opacity: 1, height: "auto" }}
               exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.2 }}
-              className="md:hidden overflow-hidden"
-              style={{ background: '#FFF8EE', borderTop: '1px solid #E8D5D0' }}
+              transition={{ duration: 0.3, ease: "easeInOut" }}
+              className="lg:hidden overflow-hidden"
+              style={{ background: "oklch(0.96 0.02 80 / 0.98)", backdropFilter: "blur(20px)" }}
             >
-              <div className="container py-4 flex flex-col gap-4">
+              <div className="container py-6 flex flex-col gap-5">
                 {navLinks.map((link) => (
-                  <Link key={link.href} href={link.href} onClick={() => setMobileOpen(false)}>
-                    <span
-                      className="nav-font block py-1"
-                      style={{
-                        color: location === link.href ? '#B87333' : '#4A2040',
-                        textDecoration: 'none',
-                      }}
-                    >
-                      {link.label}
-                    </span>
-                  </Link>
+                  <NavLink key={link.href} href={link.href} label={link.label} onClick={() => setMobileOpen(false)} />
                 ))}
               </div>
-            </motion.div>
+            </motion.nav>
           )}
         </AnimatePresence>
-
-        {/* Subtle bottom border */}
-        <div style={{ height: '1px', background: 'linear-gradient(to right, transparent, #E8D5D0, transparent)' }} />
       </header>
 
-      {/* Main Content */}
-      <main className="flex-1">
+      {/* Main content */}
+      <main className="flex-1 pt-20 lg:pt-24">
         {children}
       </main>
 
       {/* Footer */}
-      <footer style={{ background: '#4A2040', color: '#FFF8EE' }} className="mt-16">
-        <div className="container py-12">
-          <div className="flex flex-col md:flex-row justify-between items-start gap-8">
-            {/* Left */}
+      <footer
+        className="relative overflow-hidden"
+        style={{ background: "oklch(0.22 0.08 310)" }}
+      >
+        {/* Mandala watermark */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] opacity-[0.04] pointer-events-none">
+          <img src={MANDALA_URL} alt="" className="w-full h-full object-contain" />
+        </div>
+
+        <div className="container relative z-10 py-16 lg:py-20">
+          {/* Golden divider at top */}
+          <div className="flex items-center gap-4 mb-12">
+            <div className="flex-1 h-px" style={{ background: "linear-gradient(90deg, transparent, oklch(0.78 0.14 75 / 0.3), transparent)" }} />
+            <div className="w-2 h-2 rounded-full" style={{ background: "oklch(0.78 0.14 75 / 0.5)" }} />
+            <div className="flex-1 h-px" style={{ background: "linear-gradient(90deg, transparent, oklch(0.78 0.14 75 / 0.3), transparent)" }} />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-12 lg:gap-16">
+            {/* Brand */}
             <div>
-              <span
-                style={{ fontFamily: 'var(--font-display)', fontSize: '1.25rem', fontWeight: 600 }}
+              <h3
+                className="text-2xl mb-4"
+                style={{ fontFamily: "var(--font-display)", fontWeight: 600, color: "oklch(0.96 0.02 80)" }}
               >
                 The Oracle Lover
-              </span>
-              <p style={{ fontFamily: 'var(--font-body)', fontSize: '0.95rem', opacity: 0.7, marginTop: '0.5rem', maxWidth: '320px' }}>
-                Practical oracle education from thirty years at the table.
+              </h3>
+              <p
+                className="text-sm leading-relaxed"
+                style={{ fontFamily: "var(--font-body)", color: "oklch(0.96 0.02 80 / 0.55)", lineHeight: 1.8 }}
+              >
+                Thirty years of oracle card wisdom distilled into practical, grounded education.
+                No woo required — just honest inquiry and a willingness to look.
               </p>
             </div>
 
-            {/* Right — Nav links */}
-            <div className="flex flex-wrap gap-x-8 gap-y-3">
-              {navLinks.map((link) => (
-                <Link key={link.href} href={link.href}>
-                  <span
-                    className="nav-font"
-                    style={{ color: '#E8D5D0', textDecoration: 'none', fontSize: '0.75rem' }}
+            {/* Navigation */}
+            <div>
+              <h4
+                className="text-xs tracking-[0.2em] uppercase mb-5"
+                style={{ fontFamily: "var(--font-body)", fontWeight: 500, color: "oklch(0.78 0.14 75)" }}
+              >
+                Explore
+              </h4>
+              <nav className="flex flex-col gap-3">
+                {navLinks.map((link) => (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    className="text-sm transition-colors duration-300 hover:!text-gold"
+                    style={{
+                      fontFamily: "var(--font-body)",
+                      color: "oklch(0.96 0.02 80 / 0.55)",
+                    }}
                   >
                     {link.label}
-                  </span>
-                </Link>
-              ))}
+                  </Link>
+                ))}
+              </nav>
+            </div>
+
+            {/* External */}
+            <div>
+              <h4
+                className="text-xs tracking-[0.2em] uppercase mb-5"
+                style={{ fontFamily: "var(--font-body)", fontWeight: 500, color: "oklch(0.78 0.14 75)" }}
+              >
+                Beyond
+              </h4>
+              <nav className="flex flex-col gap-3">
+                <a
+                  href="https://theshankaraexperience.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm transition-colors duration-300 hover:!text-gold"
+                  style={{ fontFamily: "var(--font-body)", color: "oklch(0.96 0.02 80 / 0.55)" }}
+                >
+                  The Shankara Experience
+                </a>
+                <a
+                  href="https://theshankaraoracleapp.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm transition-colors duration-300 hover:!text-gold"
+                  style={{ fontFamily: "var(--font-body)", color: "oklch(0.96 0.02 80 / 0.55)" }}
+                >
+                  The Oracle App
+                </a>
+                <a
+                  href="https://paulwagner.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm transition-colors duration-300 hover:!text-gold"
+                  style={{ fontFamily: "var(--font-body)", color: "oklch(0.96 0.02 80 / 0.55)" }}
+                >
+                  Main Site
+                </a>
+              </nav>
             </div>
           </div>
 
           {/* Bottom bar */}
-          <div
-            className="mt-8 pt-6 flex flex-col sm:flex-row justify-between items-center gap-4"
-            style={{ borderTop: '1px solid rgba(232, 213, 208, 0.2)' }}
-          >
-            <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.7rem', opacity: 0.5 }}>
-              &copy; {new Date().getFullYear()} The Oracle Lover
-            </span>
-            <div className="flex gap-6">
-              <a
-                href="https://paulwagner.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{ fontFamily: 'var(--font-mono)', fontSize: '0.7rem', color: '#B87333', textDecoration: 'none' }}
-              >
-                Main Site
-              </a>
-              <a
-                href="https://theshankaraexperience.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{ fontFamily: 'var(--font-mono)', fontSize: '0.7rem', color: '#B87333', textDecoration: 'none' }}
-              >
-                The Shankara Oracle
-              </a>
-            </div>
+          <div className="mt-16 pt-6 flex flex-col sm:flex-row items-center justify-between gap-4" style={{ borderTop: "1px solid oklch(0.96 0.02 80 / 0.08)" }}>
+            <p className="text-xs" style={{ color: "oklch(0.96 0.02 80 / 0.3)", fontFamily: "var(--font-body)" }}>
+              &copy; {new Date().getFullYear()} The Oracle Lover. All rights reserved.
+            </p>
+            <p className="text-xs" style={{ color: "oklch(0.96 0.02 80 / 0.3)", fontFamily: "var(--font-display)", fontStyle: "italic" }}>
+              Pull up a chair.
+            </p>
           </div>
         </div>
       </footer>

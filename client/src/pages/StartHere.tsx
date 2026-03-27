@@ -1,174 +1,177 @@
 /*
- * Start Here Page — The Oracle Lover
- * Curated starting point for new visitors
- * 5-6 recommended articles with descriptions
+ * Start Here — Sacred Warmth
+ * Curated pathway for newcomers with numbered steps and warm imagery
  */
+import Layout from "@/components/Layout";
 import { Link } from "wouter";
 import { motion } from "framer-motion";
-import Layout from "@/components/Layout";
 import { articles } from "@/data/articles";
 import { ArrowRight } from "lucide-react";
 
-const JOURNAL_IMAGE = "https://d2xsxph8kpxj0f.cloudfront.net/310519663309220512/gmij7LjAnhSeEKhviVH9SQ/journal-writing-AvUjuWdzXLBcZAHkKdWNgF.webp";
+const JOURNAL_IMG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663309220512/gmij7LjAnhSeEKhviVH9SQ/journal-morning-light-hSaczLzYiDM9V2VLP2ipAc.webp";
 
-// Curated article slugs for beginners
 const curatedSlugs = [
-  {
-    slug: "how-to-read-oracle-cards-without-losing-your-mind",
-    why: "If you've never picked up an oracle deck — or if you have and immediately felt like you were doing it wrong — start here. This is the foundation, stripped of everything unnecessary.",
-  },
-  {
-    slug: "tarot-vs-oracle-decks-whats-actually-different",
-    why: "The question everyone asks first, answered without the usual gatekeeping. Understanding the difference between these two systems will save you months of confusion.",
-  },
-  {
-    slug: "the-spread-isnt-the-point-the-question-is",
-    why: "Most people obsess over spreads when they should be obsessing over questions. This piece will change how you approach every reading you do from here on out.",
-  },
-  {
-    slug: "how-to-build-a-daily-card-practice-that-actually-sticks",
-    why: "You don't need an hour. You don't need a ritual. You need two minutes and a willingness to be honest. This is the practical guide to building a practice that compounds.",
-  },
-  {
-    slug: "oracle-cards-are-not-fortune-telling-theyre-mirror-holding",
-    why: "The single most important distinction in this entire practice. Once you understand what oracle cards actually do — and what they don't — everything else falls into place.",
-  },
-  {
-    slug: "the-difference-between-intuition-and-wishful-thinking",
-    why: "The skill that separates someone who reads cards from someone who uses cards to lie to themselves. This one's uncomfortable. That's how you know it matters.",
-  },
+  { slug: "how-to-read-oracle-cards-without-losing-your-mind", step: "Start with the basics" },
+  { slug: "oracle-cards-are-not-fortune-telling-theyre-mirror-holding", step: "Understand what you're holding" },
+  { slug: "tarot-vs-oracle-decks-whats-actually-different", step: "Know the difference" },
+  { slug: "the-four-decks-that-changed-how-i-read", step: "Choose your deck wisely" },
+  { slug: "how-to-build-a-daily-card-practice-that-actually-sticks", step: "Build a daily practice" },
+  { slug: "the-spread-isnt-the-point-the-question-is", step: "Learn the essential spread" },
 ];
 
 export default function StartHere() {
+  const curatedArticles = curatedSlugs
+    .map((item) => ({ ...item, article: articles.find((a) => a.slug === item.slug) }))
+    .filter((item) => item.article);
+
   return (
     <Layout>
+      {/* Hero */}
       <section className="container py-12 lg:py-20">
-        <div style={{ maxWidth: '700px', margin: '0 auto' }}>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
+            transition={{ duration: 0.7 }}
           >
-            <h1
-              style={{
-                fontFamily: 'var(--font-display)',
-                fontWeight: 700,
-                fontSize: 'clamp(2rem, 5vw, 2.75rem)',
-                color: '#4A2040',
-                marginBottom: '0.5rem',
-              }}
+            <p
+              className="text-xs tracking-[0.3em] uppercase mb-4"
+              style={{ fontFamily: "var(--font-body)", fontWeight: 500, color: "oklch(0.78 0.14 75)" }}
             >
               Start Here
+            </p>
+            <h1
+              className="text-4xl lg:text-5xl mb-6"
+              style={{ fontFamily: "var(--font-display)", fontWeight: 600, color: "oklch(0.22 0.04 310)" }}
+            >
+              The Path Begins Here
             </h1>
-            <div className="copper-divider" />
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-          >
-            <img
-              src={JOURNAL_IMAGE}
-              alt="Open journal with card spread notes and oracle cards on a warm desk"
-              style={{
-                width: '100%',
-                borderRadius: '12px',
-                marginTop: '2rem',
-                marginBottom: '2.5rem',
-                boxShadow: '0 8px 32px rgba(74, 32, 64, 0.12)',
-              }}
-              loading="lazy"
-            />
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-          >
-            <p style={{ fontFamily: 'var(--font-body)', fontSize: '1.125rem', color: '#2A1025', lineHeight: 1.7, marginBottom: '1.5rem' }}>
-              There are twenty-five articles on this site, and they don't need to be read in any particular order. But if you're new to oracle work — or if you've been doing it for a while and suspect you might be missing something fundamental — these six pieces will give you the strongest foundation I know how to build.
-            </p>
-            <p style={{ fontFamily: 'var(--font-body)', fontSize: '1.125rem', color: '#2A1025', lineHeight: 1.7, marginBottom: '2.5rem' }}>
-              Read them slowly. Sit with the ones that make you uncomfortable. The discomfort is where the real work lives.
+            <p
+              className="text-lg max-w-lg"
+              style={{ fontFamily: "var(--font-body)", fontWeight: 300, color: "oklch(0.40 0.04 310)", lineHeight: 1.8 }}
+            >
+              Six articles, read in order, that will take you from "I just bought a deck"
+              to "I trust what I'm seeing." No prerequisites. No spiritual homework.
+              Just you, the cards, and a willingness to pay attention.
             </p>
           </motion.div>
 
-          {/* Curated Articles */}
-          <div className="flex flex-col gap-8">
-            {curatedSlugs.map((item, i) => {
-              const article = articles.find((a) => a.slug === item.slug);
-              if (!article) return null;
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="hidden lg:block"
+          >
+            <div className="rounded-xl overflow-hidden warm-glow">
+              <img
+                src={JOURNAL_IMG}
+                alt="Morning journaling with oracle cards"
+                className="w-full object-cover"
+                style={{ aspectRatio: "3/2" }}
+              />
+            </div>
+          </motion.div>
+        </div>
+      </section>
 
-              return (
-                <motion.div
-                  key={item.slug}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: "-30px" }}
-                  transition={{ duration: 0.4, delay: i * 0.05 }}
+      {/* Curated articles */}
+      <section className="container pb-20 lg:pb-28">
+        <div className="max-w-3xl mx-auto">
+          {curatedArticles.map((item, i) => (
+            <motion.div
+              key={item.slug}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-40px" }}
+              transition={{ duration: 0.6, delay: i * 0.08 }}
+            >
+              <Link href={`/articles/${item.slug}`} className="block group">
+                <div
+                  className="flex gap-6 py-8 transition-all duration-300"
+                  style={{ borderBottom: "1px solid oklch(0.88 0.03 75)" }}
                 >
-                  <Link href={`/articles/${item.slug}`}>
+                  {/* Step number */}
+                  <div className="flex-shrink-0">
                     <div
-                      className="p-6 transition-all duration-300"
+                      className="w-12 h-12 rounded-full flex items-center justify-center text-lg transition-all duration-300 group-hover:scale-110"
                       style={{
-                        background: '#E8D5D0',
-                        borderRadius: '12px',
-                        borderLeft: '4px solid #B87333',
-                        cursor: 'pointer',
-                      }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.boxShadow = '0 6px 20px rgba(74, 32, 64, 0.12)';
-                        e.currentTarget.style.transform = 'translateY(-1px)';
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.boxShadow = 'none';
-                        e.currentTarget.style.transform = 'translateY(0)';
+                        fontFamily: "var(--font-display)",
+                        fontWeight: 600,
+                        background: "oklch(0.78 0.14 75 / 0.1)",
+                        color: "oklch(0.65 0.14 70)",
+                        border: "1px solid oklch(0.78 0.14 75 / 0.2)",
                       }}
                     >
-                      <div className="flex items-start justify-between gap-3 mb-2">
-                        <h3
-                          style={{
-                            fontFamily: 'var(--font-display)',
-                            fontSize: '1.25rem',
-                            fontWeight: 600,
-                            color: '#4A2040',
-                            margin: 0,
-                            lineHeight: 1.3,
-                          }}
-                        >
-                          {article.title}
-                        </h3>
-                        <span className="reading-time whitespace-nowrap mt-1">
-                          {article.readingTime}
-                        </span>
-                      </div>
-                      <p
-                        style={{
-                          fontFamily: 'var(--font-body)',
-                          fontSize: '0.9375rem',
-                          color: '#4A2040',
-                          lineHeight: 1.6,
-                          margin: 0,
-                          opacity: 0.85,
-                        }}
-                      >
-                        {item.why}
-                      </p>
-                      <span
-                        className="inline-flex items-center gap-1 mt-3"
-                        style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: '#B87333', textTransform: 'uppercase' }}
-                      >
-                        Read this one <ArrowRight size={12} />
-                      </span>
+                      {i + 1}
                     </div>
-                  </Link>
-                </motion.div>
-              );
-            })}
-          </div>
+                  </div>
+
+                  {/* Content */}
+                  <div className="flex-1 min-w-0">
+                    <p
+                      className="text-xs tracking-[0.1em] uppercase mb-2"
+                      style={{ fontFamily: "var(--font-body)", fontWeight: 500, color: "oklch(0.78 0.14 75)" }}
+                    >
+                      {item.step}
+                    </p>
+                    <h3
+                      className="text-xl lg:text-2xl mb-2 transition-colors duration-300 group-hover:text-plum"
+                      style={{ fontFamily: "var(--font-display)", fontWeight: 600, color: "oklch(0.22 0.04 310)", lineHeight: 1.3 }}
+                    >
+                      {item.article!.title}
+                    </h3>
+                    <p
+                      className="text-sm mb-3"
+                      style={{ fontFamily: "var(--font-body)", color: "oklch(0.50 0.04 310)", lineHeight: 1.7 }}
+                    >
+                      {item.article!.excerpt}
+                    </p>
+                    <span
+                      className="inline-flex items-center gap-1.5 text-xs tracking-wide transition-all duration-300 group-hover:gap-3"
+                      style={{ fontFamily: "var(--font-body)", fontWeight: 500, color: "oklch(0.78 0.14 75)" }}
+                    >
+                      Read article <ArrowRight size={14} />
+                    </span>
+                  </div>
+                </div>
+              </Link>
+            </motion.div>
+          ))}
         </div>
+
+        {/* After the path */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.7 }}
+          className="max-w-3xl mx-auto mt-16 text-center"
+        >
+          <div className="golden-divider mb-8">
+            <span style={{ fontFamily: "var(--font-display)", fontStyle: "italic", color: "oklch(0.50 0.04 310)" }}>
+              then keep going
+            </span>
+          </div>
+          <p
+            className="text-base mb-8"
+            style={{ fontFamily: "var(--font-body)", color: "oklch(0.50 0.04 310)", lineHeight: 1.7 }}
+          >
+            Once you've read these six, you'll have a solid foundation. The remaining nineteen articles
+            go deeper — into philosophy, advanced techniques, and the inner work that makes the outer practice sing.
+          </p>
+          <Link
+            href="/articles"
+            className="inline-flex items-center gap-2 px-7 py-3.5 rounded-lg text-sm tracking-wide transition-all duration-300 hover:gap-3"
+            style={{
+              fontFamily: "var(--font-body)",
+              fontWeight: 500,
+              background: "oklch(0.35 0.12 320)",
+              color: "oklch(0.96 0.02 80)",
+            }}
+          >
+            All 25 Articles <ArrowRight size={16} />
+          </Link>
+        </motion.div>
       </section>
     </Layout>
   );

@@ -1,28 +1,25 @@
 /*
- * Article Page — The Oracle Lover
- * 700px reading column, bold headline in Clash Display
- * Pull quotes with copper left border and dusty rose bg
- * Reading time in Space Mono at top
+ * ArticlePage — Sacred Warmth
+ * Beautiful article reading experience with golden accents, drop cap, prev/next
  */
-import { useParams, Link } from "wouter";
-import { motion } from "framer-motion";
 import Layout from "@/components/Layout";
-import MarkdownRenderer from "@/components/MarkdownRenderer";
+import { Link, useParams } from "wouter";
+import { motion } from "framer-motion";
 import { articles } from "@/data/articles";
+import MarkdownRenderer from "@/components/MarkdownRenderer";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { useEffect } from "react";
+
+const MANDALA_IMG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663309220512/gmij7LjAnhSeEKhviVH9SQ/golden-mandala-nHw5UU8ArX4swxcUEgwBqh.webp";
 
 export default function ArticlePage() {
   const params = useParams<{ slug: string }>();
   const slug = params.slug;
+  const idx = articles.findIndex((a) => a.slug === slug);
+  const article = articles[idx];
+  const prev = idx > 0 ? articles[idx - 1] : null;
+  const next = idx < articles.length - 1 ? articles[idx + 1] : null;
 
-  const articleIndex = articles.findIndex((a) => a.slug === slug);
-  const article = articles[articleIndex];
-
-  const prevArticle = articleIndex > 0 ? articles[articleIndex - 1] : null;
-  const nextArticle = articleIndex < articles.length - 1 ? articles[articleIndex + 1] : null;
-
-  // Scroll to top on article change
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [slug]);
@@ -31,13 +28,11 @@ export default function ArticlePage() {
     return (
       <Layout>
         <div className="container py-20 text-center">
-          <h1 style={{ fontFamily: 'var(--font-display)', color: '#4A2040' }}>
+          <h1 style={{ fontFamily: "var(--font-display)", color: "oklch(0.35 0.12 320)" }}>
             Article not found
           </h1>
-          <Link href="/articles">
-            <span style={{ color: '#B87333', fontFamily: 'var(--font-mono)', fontSize: '0.875rem' }}>
-              Back to articles
-            </span>
+          <Link href="/articles" className="text-sm" style={{ color: "oklch(0.78 0.14 75)" }}>
+            Back to articles
           </Link>
         </div>
       </Layout>
@@ -46,143 +41,128 @@ export default function ArticlePage() {
 
   return (
     <Layout>
-      <article className="container py-12 lg:py-20">
-        <div style={{ maxWidth: '700px', margin: '0 auto' }}>
-          {/* Back link */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.3 }}
+      {/* Article header */}
+      <section className="container py-12 lg:py-20">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7 }}
+          className="max-w-3xl mx-auto"
+        >
+          <Link
+            href="/articles"
+            className="inline-flex items-center gap-2 text-xs tracking-[0.1em] uppercase mb-8 transition-all duration-300 hover:gap-3"
+            style={{ fontFamily: "var(--font-body)", fontWeight: 500, color: "oklch(0.78 0.14 75)" }}
           >
-            <Link href="/articles">
-              <span
-                className="inline-flex items-center gap-1 mb-8"
-                style={{
-                  fontFamily: 'var(--font-mono)',
-                  fontSize: '0.8125rem',
-                  color: '#B87333',
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.03em',
-                }}
-              >
-                <ArrowLeft size={14} /> All articles
-              </span>
-            </Link>
-          </motion.div>
+            <ArrowLeft size={14} /> All Articles
+          </Link>
 
-          {/* Reading time */}
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4 }}
+          <p
+            className="text-xs tracking-[0.15em] uppercase mb-4"
+            style={{ fontFamily: "var(--font-body)", fontWeight: 500, color: "oklch(0.60 0.04 310)" }}
           >
-            <span className="reading-time">{article.readingTime}</span>
-          </motion.div>
+            {article.readingTime}
+          </p>
 
-          {/* Title */}
-          <motion.h1
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.1 }}
+          <h1
+            className="text-3xl sm:text-4xl lg:text-[2.75rem] mb-8"
             style={{
-              fontFamily: 'var(--font-display)',
-              fontWeight: 700,
-              fontSize: 'clamp(2rem, 5vw, 2.75rem)',
-              color: '#4A2040',
-              marginTop: '0.5rem',
-              marginBottom: '0.5rem',
-              lineHeight: 1.15,
+              fontFamily: "var(--font-display)",
+              fontWeight: 600,
+              color: "oklch(0.22 0.04 310)",
+              lineHeight: 1.2,
             }}
           >
             {article.title}
-          </motion.h1>
+          </h1>
 
-          <div className="copper-divider" style={{ marginBottom: '2.5rem' }} />
+          <div className="flex items-center gap-4">
+            <div className="flex-1 h-px" style={{ background: "linear-gradient(90deg, oklch(0.78 0.14 75 / 0.4), transparent)" }} />
+            <div className="w-1.5 h-1.5 rounded-full" style={{ background: "oklch(0.78 0.14 75 / 0.5)" }} />
+            <div className="flex-1 h-px" style={{ background: "linear-gradient(90deg, transparent, oklch(0.78 0.14 75 / 0.4))" }} />
+          </div>
+        </motion.div>
+      </section>
 
-          {/* Article Content */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-          >
+      {/* Article body */}
+      <section className="container pb-16 lg:pb-24">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, delay: 0.2 }}
+          className="max-w-3xl mx-auto"
+        >
+          <div className="article-prose drop-cap">
             <MarkdownRenderer content={article.content} />
-          </motion.div>
+          </div>
+        </motion.div>
+      </section>
 
-          {/* Prev / Next Navigation */}
-          <div
-            className="mt-16 pt-8 flex flex-col sm:flex-row justify-between gap-6"
-            style={{ borderTop: '1px solid #E8D5D0' }}
-          >
-            {prevArticle ? (
-              <Link href={`/articles/${prevArticle.slug}`}>
-                <div className="flex items-start gap-2 group" style={{ maxWidth: '280px' }}>
-                  <ArrowLeft size={16} style={{ color: '#B87333', marginTop: '4px', flexShrink: 0 }} />
-                  <div>
-                    <span
-                      style={{
-                        fontFamily: 'var(--font-mono)',
-                        fontSize: '0.6875rem',
-                        color: '#B87333',
-                        textTransform: 'uppercase',
-                        letterSpacing: '0.05em',
-                      }}
-                    >
-                      Previous
-                    </span>
-                    <p
-                      style={{
-                        fontFamily: 'var(--font-body)',
-                        fontSize: '0.9375rem',
-                        color: '#4A2040',
-                        margin: '0.25rem 0 0 0',
-                        lineHeight: 1.4,
-                      }}
-                    >
-                      {prevArticle.title}
-                    </p>
-                  </div>
+      {/* End ornament */}
+      <section className="container pb-8">
+        <div className="max-w-3xl mx-auto text-center">
+          <img src={MANDALA_IMG} alt="" className="w-10 h-10 mx-auto opacity-25" />
+        </div>
+      </section>
+
+      {/* Prev / Next */}
+      <section className="container pb-20 lg:pb-28">
+        <div className="max-w-3xl mx-auto">
+          <div className="h-px mb-8" style={{ background: "linear-gradient(90deg, transparent, oklch(0.78 0.14 75 / 0.3), transparent)" }} />
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {prev ? (
+              <Link href={`/articles/${prev.slug}`} className="block group">
+                <div
+                  className="p-5 rounded-xl transition-all duration-300 group-hover:-translate-y-1"
+                  style={{
+                    background: "oklch(0.78 0.14 75 / 0.06)",
+                    border: "1px solid oklch(0.78 0.14 75 / 0.12)",
+                  }}
+                >
+                  <p
+                    className="text-xs tracking-[0.1em] uppercase mb-2 flex items-center gap-1"
+                    style={{ fontFamily: "var(--font-body)", fontWeight: 500, color: "oklch(0.60 0.04 310)" }}
+                  >
+                    <ArrowLeft size={12} /> Previous
+                  </p>
+                  <p
+                    className="text-sm transition-colors duration-300 group-hover:text-plum"
+                    style={{ fontFamily: "var(--font-display)", fontWeight: 600, color: "oklch(0.35 0.12 320)", lineHeight: 1.3 }}
+                  >
+                    {prev.title}
+                  </p>
                 </div>
               </Link>
-            ) : (
-              <div />
-            )}
+            ) : <div />}
 
-            {nextArticle ? (
-              <Link href={`/articles/${nextArticle.slug}`}>
-                <div className="flex items-start gap-2 group text-right sm:ml-auto" style={{ maxWidth: '280px' }}>
-                  <div>
-                    <span
-                      style={{
-                        fontFamily: 'var(--font-mono)',
-                        fontSize: '0.6875rem',
-                        color: '#B87333',
-                        textTransform: 'uppercase',
-                        letterSpacing: '0.05em',
-                      }}
-                    >
-                      Next
-                    </span>
-                    <p
-                      style={{
-                        fontFamily: 'var(--font-body)',
-                        fontSize: '0.9375rem',
-                        color: '#4A2040',
-                        margin: '0.25rem 0 0 0',
-                        lineHeight: 1.4,
-                      }}
-                    >
-                      {nextArticle.title}
-                    </p>
-                  </div>
-                  <ArrowRight size={16} style={{ color: '#B87333', marginTop: '4px', flexShrink: 0 }} />
+            {next ? (
+              <Link href={`/articles/${next.slug}`} className="block group text-right">
+                <div
+                  className="p-5 rounded-xl transition-all duration-300 group-hover:-translate-y-1"
+                  style={{
+                    background: "oklch(0.78 0.14 75 / 0.06)",
+                    border: "1px solid oklch(0.78 0.14 75 / 0.12)",
+                  }}
+                >
+                  <p
+                    className="text-xs tracking-[0.1em] uppercase mb-2 flex items-center gap-1 justify-end"
+                    style={{ fontFamily: "var(--font-body)", fontWeight: 500, color: "oklch(0.60 0.04 310)" }}
+                  >
+                    Next <ArrowRight size={12} />
+                  </p>
+                  <p
+                    className="text-sm transition-colors duration-300 group-hover:text-plum"
+                    style={{ fontFamily: "var(--font-display)", fontWeight: 600, color: "oklch(0.35 0.12 320)", lineHeight: 1.3 }}
+                  >
+                    {next.title}
+                  </p>
                 </div>
               </Link>
-            ) : (
-              <div />
-            )}
+            ) : <div />}
           </div>
         </div>
-      </article>
+      </section>
     </Layout>
   );
 }

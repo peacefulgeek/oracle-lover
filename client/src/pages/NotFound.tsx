@@ -1,44 +1,45 @@
 import { Link } from "wouter";
 import Layout from "@/components/Layout";
+import { motion } from "framer-motion";
+import { ArrowLeft } from "lucide-react";
+
+const MANDALA_IMG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663309220512/gmij7LjAnhSeEKhviVH9SQ/golden-mandala-nHw5UU8ArX4swxcUEgwBqh.webp";
 
 export default function NotFound() {
   return (
     <Layout>
-      <div className="container py-20 text-center" style={{ maxWidth: '600px', margin: '0 auto' }}>
-        <h1
-          style={{
-            fontFamily: 'var(--font-display)',
-            fontWeight: 700,
-            fontSize: 'clamp(2rem, 5vw, 3rem)',
-            color: '#4A2040',
-            marginBottom: '1rem',
-          }}
+      <div className="container py-24 lg:py-32 text-center">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7 }}
         >
-          Page Not Found
-        </h1>
-        <p
-          style={{
-            fontFamily: 'var(--font-body)',
-            fontSize: '1.125rem',
-            color: '#2A1025',
-            marginBottom: '2rem',
-          }}
-        >
-          The card you pulled doesn't seem to exist in this deck. Let's get you back to the table.
-        </p>
-        <Link href="/">
-          <span
+          <img src={MANDALA_IMG} alt="" className="w-16 h-16 mx-auto mb-8 opacity-30" />
+          <h1
+            className="text-4xl lg:text-5xl mb-4"
+            style={{ fontFamily: "var(--font-display)", fontWeight: 600, color: "oklch(0.22 0.04 310)" }}
+          >
+            Page Not Found
+          </h1>
+          <p
+            className="text-lg mb-10 max-w-md mx-auto"
+            style={{ fontFamily: "var(--font-body)", fontWeight: 300, color: "oklch(0.50 0.04 310)", lineHeight: 1.7 }}
+          >
+            The card you pulled doesn't seem to exist in this deck. Let's get you back to the table.
+          </p>
+          <Link
+            href="/"
+            className="inline-flex items-center gap-2 px-7 py-3.5 rounded-lg text-sm tracking-wide transition-all duration-300 hover:gap-3"
             style={{
-              fontFamily: 'var(--font-mono)',
-              fontSize: '0.875rem',
-              color: '#B87333',
-              textTransform: 'uppercase' as const,
-              letterSpacing: '0.05em',
+              fontFamily: "var(--font-body)",
+              fontWeight: 500,
+              background: "oklch(0.35 0.12 320)",
+              color: "oklch(0.96 0.02 80)",
             }}
           >
-            Return Home
-          </span>
-        </Link>
+            <ArrowLeft size={16} /> Return Home
+          </Link>
+        </motion.div>
       </div>
     </Layout>
   );

@@ -1,141 +1,155 @@
 /*
- * Articles Page — The Oracle Lover
- * 2-column grid of article cards
- * Each card: rounded corners, title, excerpt, reading time
+ * Articles — Sacred Warmth
+ * Magazine-style article listing with category filtering
  */
+import Layout from "@/components/Layout";
 import { Link } from "wouter";
 import { motion } from "framer-motion";
-import Layout from "@/components/Layout";
 import { articles } from "@/data/articles";
+import { ArrowRight } from "lucide-react";
+import { useState } from "react";
 
-const SPREAD_IMAGE = "https://d2xsxph8kpxj0f.cloudfront.net/310519663309220512/gmij7LjAnhSeEKhviVH9SQ/card-spread-table-X7bZx9NNqiZ2EzrumYtjxT.webp";
+function getCategory(slug: string): string {
+  if (slug.includes("tarot") || slug.includes("spread") || slug.includes("daily") || slug.includes("practice") || slug.includes("choose") || slug.includes("cleanse") || slug.includes("journal")) return "Practice";
+  if (slug.includes("jung") || slug.includes("campbell") || slug.includes("hero") || slug.includes("archetype") || slug.includes("shadow") || slug.includes("myth")) return "Philosophy";
+  if (slug.includes("intuition") || slug.includes("emotion") || slug.includes("fear") || slug.includes("ego") || slug.includes("mirror") || slug.includes("wishful")) return "Inner Work";
+  return "Foundation";
+}
+
+const categories = ["All", "Foundation", "Practice", "Philosophy", "Inner Work"];
 
 export default function Articles() {
+  const [active, setActive] = useState("All");
+
+  const filtered = active === "All"
+    ? articles
+    : articles.filter((a) => getCategory(a.slug) === active);
+
   return (
     <Layout>
-      {/* Header with image */}
-      <section className="container py-12 lg:py-16">
-        <div style={{ maxWidth: '900px', margin: '0 auto' }}>
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
+      {/* Header */}
+      <section className="container py-12 lg:py-20">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7 }}
+        >
+          <p
+            className="text-xs tracking-[0.3em] uppercase mb-4"
+            style={{ fontFamily: "var(--font-body)", fontWeight: 500, color: "oklch(0.78 0.14 75)" }}
           >
-            <h1
-              style={{
-                fontFamily: 'var(--font-display)',
-                fontWeight: 700,
-                fontSize: 'clamp(2rem, 5vw, 2.75rem)',
-                color: '#4A2040',
-                marginBottom: '0.5rem',
-              }}
-            >
-              The Articles
-            </h1>
-            <div className="copper-divider" />
-            <p
-              style={{
-                fontFamily: 'var(--font-body)',
-                fontSize: '1.125rem',
-                color: '#2A1025',
-                lineHeight: 1.7,
-                marginTop: '1.5rem',
-                maxWidth: '600px',
-              }}
-            >
-              Thirty years of card-flipping distilled into actually useful writing. Each piece is designed to teach you something you can use at the table today.
-            </p>
-          </motion.div>
+            Articles
+          </p>
+          <h1
+            className="text-4xl lg:text-5xl mb-4"
+            style={{ fontFamily: "var(--font-display)", fontWeight: 600, color: "oklch(0.22 0.04 310)" }}
+          >
+            Twenty-Five Pieces of Practical Wisdom
+          </h1>
+          <p
+            className="text-lg max-w-2xl"
+            style={{ fontFamily: "var(--font-body)", fontWeight: 300, color: "oklch(0.40 0.04 310)", lineHeight: 1.7 }}
+          >
+            Everything I've learned in thirty years at the table, written for people who want
+            the insight without the incense. (Okay, sometimes with the incense.)
+          </p>
+        </motion.div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.15 }}
-          >
-            <img
-              src={SPREAD_IMAGE}
-              alt="Oracle card spread on linen tablecloth with candle and sacred stones"
+        {/* Category filter */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+          className="flex flex-wrap gap-3 mt-10"
+        >
+          {categories.map((cat) => (
+            <button
+              key={cat}
+              onClick={() => setActive(cat)}
+              className="px-4 py-2 rounded-full text-xs tracking-[0.1em] uppercase transition-all duration-300"
               style={{
-                width: '100%',
-                borderRadius: '12px',
-                marginTop: '2rem',
-                marginBottom: '1rem',
-                boxShadow: '0 8px 32px rgba(74, 32, 64, 0.12)',
-                maxHeight: '360px',
-                objectFit: 'cover',
+                fontFamily: "var(--font-body)",
+                fontWeight: 500,
+                background: active === cat ? "oklch(0.35 0.12 320)" : "oklch(0.78 0.14 75 / 0.08)",
+                color: active === cat ? "oklch(0.96 0.02 80)" : "oklch(0.50 0.04 310)",
+                border: active === cat ? "1px solid oklch(0.35 0.12 320)" : "1px solid oklch(0.78 0.14 75 / 0.15)",
               }}
-              loading="lazy"
-            />
-          </motion.div>
-        </div>
+            >
+              {cat}
+            </button>
+          ))}
+        </motion.div>
       </section>
 
-      {/* Article Grid */}
-      <section className="container pb-16 lg:pb-20">
-        <div
-          className="grid grid-cols-1 md:grid-cols-2 gap-6"
-          style={{ maxWidth: '900px', margin: '0 auto' }}
-        >
-          {articles.map((article, i) => (
+      {/* Article grid */}
+      <section className="container pb-20 lg:pb-28">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+          {filtered.map((article, i) => (
             <motion.div
               key={article.slug}
               initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-30px" }}
-              transition={{ duration: 0.4, delay: (i % 2) * 0.08 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: Math.min(i * 0.05, 0.3) }}
             >
-              <Link href={`/articles/${article.slug}`}>
-                <div
-                  className="p-6 h-full transition-all duration-300"
-                  style={{
-                    background: '#E8D5D0',
-                    borderRadius: '12px',
-                    cursor: 'pointer',
-                    boxShadow: '0 2px 8px rgba(74, 32, 64, 0.06)',
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.boxShadow = '0 8px 24px rgba(74, 32, 64, 0.14)';
-                    e.currentTarget.style.transform = 'translateY(-2px)';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.boxShadow = '0 2px 8px rgba(74, 32, 64, 0.06)';
-                    e.currentTarget.style.transform = 'translateY(0)';
-                  }}
-                >
-                  <span className="reading-time">{article.readingTime}</span>
+              <Link href={`/articles/${article.slug}`} className="block group h-full">
+                <article className="sacred-card p-6 h-full flex flex-col">
+                  {/* Category */}
+                  <div className="mb-4">
+                    <span
+                      className="inline-block px-3 py-1 rounded-full text-[0.65rem] tracking-[0.1em] uppercase"
+                      style={{
+                        fontFamily: "var(--font-body)",
+                        fontWeight: 500,
+                        background: "oklch(0.78 0.14 75 / 0.1)",
+                        color: "oklch(0.65 0.14 70)",
+                      }}
+                    >
+                      {getCategory(article.slug)}
+                    </span>
+                  </div>
+
+                  {/* Title */}
                   <h3
-                    style={{
-                      fontFamily: 'var(--font-display)',
-                      fontSize: '1.2rem',
-                      fontWeight: 600,
-                      color: '#4A2040',
-                      marginTop: '0.5rem',
-                      marginBottom: '0.5rem',
-                      lineHeight: 1.3,
-                    }}
+                    className="text-xl mb-3 transition-colors duration-300 group-hover:text-plum"
+                    style={{ fontFamily: "var(--font-display)", fontWeight: 600, color: "oklch(0.22 0.04 310)", lineHeight: 1.3 }}
                   >
                     {article.title}
                   </h3>
+
+                  {/* Excerpt */}
                   <p
-                    style={{
-                      fontFamily: 'var(--font-body)',
-                      fontSize: '0.9375rem',
-                      color: '#4A2040',
-                      lineHeight: 1.5,
-                      margin: 0,
-                      opacity: 0.8,
-                      display: '-webkit-box',
-                      WebkitLineClamp: 2,
-                      WebkitBoxOrient: 'vertical',
-                      overflow: 'hidden',
-                    }}
+                    className="text-sm flex-1 mb-4"
+                    style={{ fontFamily: "var(--font-body)", color: "oklch(0.50 0.04 310)", lineHeight: 1.7 }}
                   >
                     {article.excerpt}
                   </p>
-                </div>
+
+                  {/* Meta */}
+                  <div className="flex items-center justify-between pt-4" style={{ borderTop: "1px solid oklch(0.88 0.03 75)" }}>
+                    <span
+                      className="text-xs"
+                      style={{ fontFamily: "var(--font-body)", color: "oklch(0.60 0.04 310)" }}
+                    >
+                      {article.readingTime}
+                    </span>
+                    <span
+                      className="inline-flex items-center gap-1 text-xs tracking-wide transition-all duration-300 group-hover:gap-2"
+                      style={{ fontFamily: "var(--font-body)", fontWeight: 500, color: "oklch(0.78 0.14 75)" }}
+                    >
+                      Read <ArrowRight size={12} />
+                    </span>
+                  </div>
+                </article>
               </Link>
             </motion.div>
           ))}
+        </div>
+
+        {/* Count */}
+        <div className="text-center mt-12">
+          <p className="text-sm" style={{ fontFamily: "var(--font-body)", color: "oklch(0.60 0.04 310)" }}>
+            Showing {filtered.length} of {articles.length} articles
+          </p>
         </div>
       </section>
     </Layout>
