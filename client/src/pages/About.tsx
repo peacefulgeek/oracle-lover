@@ -3,6 +3,7 @@
  * Editorial layout with portrait image, pull quotes, warm golden accents
  */
 import Layout from "@/components/Layout";
+import SEO from "@/components/SEO";
 import { motion } from "framer-motion";
 
 const ABOUT_IMG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663309220512/gmij7LjAnhSeEKhviVH9SQ/about-sacred-hands-RgBz33DAQDf6YQazz5wy2j.webp";
@@ -11,6 +12,7 @@ const MANDALA_IMG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663309220512/gm
 export default function About() {
   return (
     <Layout>
+      <SEO title="About" description="Thirty years at the table. Over ten thousand readings. The story behind The Oracle Lover and the systems I built for honest self-inquiry." image="https://d2xsxph8kpxj0f.cloudfront.net/310519663309220512/gmij7LjAnhSeEKhviVH9SQ/about-sacred-hands-RgBz33DAQDf6YQazz5wy2j.webp" url="/about" />
       <section className="container py-12 lg:py-20">
         <motion.div
           initial={{ opacity: 0, y: 20 }}

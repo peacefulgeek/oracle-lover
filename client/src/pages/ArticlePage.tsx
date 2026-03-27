@@ -3,6 +3,7 @@
  * Beautiful article reading experience with golden accents, drop cap, prev/next
  */
 import Layout from "@/components/Layout";
+import SEO from "@/components/SEO";
 import { Link, useParams } from "wouter";
 import { motion } from "framer-motion";
 import { articles } from "@/data/articles";
@@ -41,6 +42,13 @@ export default function ArticlePage() {
 
   return (
     <Layout>
+      <SEO
+        title={article.title}
+        description={article.excerpt}
+        url={`/articles/${article.slug}`}
+        type="article"
+        article={{ section: "Oracle Education", tags: ["oracle cards", "self-inquiry", "intuition"] }}
+      />
       {/* Article header */}
       <section className="container py-12 lg:py-20">
         <motion.div

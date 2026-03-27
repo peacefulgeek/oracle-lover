@@ -3,6 +3,7 @@
  * Magazine-style article listing with category filtering
  */
 import Layout from "@/components/Layout";
+import SEO from "@/components/SEO";
 import { Link } from "wouter";
 import { motion } from "framer-motion";
 import { articles } from "@/data/articles";
@@ -27,6 +28,7 @@ export default function Articles() {
 
   return (
     <Layout>
+      <SEO title="Articles" description="Twenty-five articles on oracle cards, intuition, archetypes, and the inner work of honest self-inquiry. Practical wisdom from thirty years at the table." image="https://d2xsxph8kpxj0f.cloudfront.net/310519663309220512/gmij7LjAnhSeEKhviVH9SQ/oracle-spread-velvet-VHEbcakoEJWsWxyeQAZkkY.webp" url="/articles" />
       {/* Header */}
       <section className="container py-12 lg:py-20">
         <motion.div

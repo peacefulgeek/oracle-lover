@@ -3,6 +3,7 @@
  * Curated pathway for newcomers with numbered steps and warm imagery
  */
 import Layout from "@/components/Layout";
+import SEO from "@/components/SEO";
 import { Link } from "wouter";
 import { motion } from "framer-motion";
 import { articles } from "@/data/articles";
@@ -26,6 +27,7 @@ export default function StartHere() {
 
   return (
     <Layout>
+      <SEO title="Start Here" description="Six articles, read in order, that will take you from I just bought a deck to I trust what I am seeing. Your guided path into oracle card reading." image="https://d2xsxph8kpxj0f.cloudfront.net/310519663309220512/gmij7LjAnhSeEKhviVH9SQ/journal-morning-light-hSaczLzYiDM9V2VLP2ipAc.webp" url="/start-here" />
       {/* Hero */}
       <section className="container py-12 lg:py-20">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">

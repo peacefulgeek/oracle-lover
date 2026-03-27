@@ -3,6 +3,7 @@
  * Ways to connect, with warm imagery and sacred design
  */
 import Layout from "@/components/Layout";
+import SEO from "@/components/SEO";
 import { motion } from "framer-motion";
 import { ArrowUpRight, BookOpen, Sparkles, MessageCircle } from "lucide-react";
 
@@ -36,6 +37,7 @@ const connections = [
 export default function Connect() {
   return (
     <Layout>
+      <SEO title="Connect" description="Private sessions, the full Shankara Oracle system, and the Oracle App. Wherever you are in your practice, here is where to find me." image="https://d2xsxph8kpxj0f.cloudfront.net/310519663309220512/gmij7LjAnhSeEKhviVH9SQ/connect-warmth-JTVMkhHyr3vS65ArdVPmL4.webp" url="/connect" />
       {/* Hero */}
       <section className="container py-12 lg:py-20">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">

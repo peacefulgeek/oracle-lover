@@ -3,6 +3,7 @@
  * Full-bleed hero with overlay, three pathway cards, featured articles, cosmos quote section
  */
 import Layout from "@/components/Layout";
+import SEO from "@/components/SEO";
 import { Link } from "wouter";
 import { motion } from "framer-motion";
 import { articles } from "@/data/articles";
@@ -53,6 +54,7 @@ const pathways = [
 export default function Home() {
   return (
     <Layout>
+      <SEO url="/" />
       {/* ═══════════════════════════════════════════════════
           HERO — Full-bleed image with warm overlay
       ═══════════════════════════════════════════════════ */}

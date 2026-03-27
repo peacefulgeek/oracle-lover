@@ -3,6 +3,7 @@
  * Showcase of The Shankara Oracle system with rich imagery
  */
 import Layout from "@/components/Layout";
+import SEO from "@/components/SEO";
 import { motion } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
 
@@ -21,6 +22,7 @@ const decks = [
 export default function TheOracle() {
   return (
     <Layout>
+      <SEO title="The Shankara Oracle" description="Over 300 cards. Four distinct decks. A board. Sacred stones. The comprehensive oracle system built for deep self-inquiry without gatekeeping." image="https://d2xsxph8kpxj0f.cloudfront.net/310519663309220512/gmij7LjAnhSeEKhviVH9SQ/oracle-spread-velvet-VHEbcakoEJWsWxyeQAZkkY.webp" url="/the-oracle" />
       {/* Hero */}
       <section className="container py-12 lg:py-20">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
