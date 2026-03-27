@@ -47,7 +47,13 @@ export default function ArticlePage() {
         description={article.excerpt}
         url={`/articles/${article.slug}`}
         type="article"
-        article={{ section: "Oracle Education", tags: ["oracle cards", "self-inquiry", "intuition"] }}
+        article={{
+          section: "Oracle Education",
+          tags: ["oracle cards", "self-inquiry", "intuition", "card reading"],
+          readingTime: article.readingTime,
+          wordCount: article.content.split(/\s+/).length,
+          publishedTime: "2026-03-27",
+        }}
       />
       {/* Article header */}
       <section className="container py-12 lg:py-20">
