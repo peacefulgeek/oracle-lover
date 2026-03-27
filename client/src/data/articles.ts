@@ -4,6 +4,7 @@ export interface Article {
   readingTime: string;
   excerpt: string;
   content: string;
+  heroImage: string;
 }
 
 export const articles: Article[] = [
@@ -12,6 +13,7 @@ export const articles: Article[] = [
     title: 'How to Read Oracle Cards Without Losing Your Mind',
     readingTime: '8 min read',
     excerpt: 'This beginner\'s guide to oracle cards helps you choose a deck, perform a reading, and trust your intuition without anxiety.',
+        heroImage: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663309220512/gmij7LjAnhSeEKhviVH9SQ/article-hero-01-BTvYCwVTTZvqJ8b4UPHvZT.webp',
     content: `
 _8 min read_
 
@@ -77,6 +79,7 @@ This is the whole practice in miniature. It is the work of a lifetime, and it is
     title: 'Tarot vs. Oracle Decks — What\'s Actually Different',
     readingTime: '9 min read',
     excerpt: 'A clear, practical breakdown of the structural and philosophical differences between Tarot and Oracle decks.',
+        heroImage: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663309220512/gmij7LjAnhSeEKhviVH9SQ/article-hero-02-mLAVboHr3otEqApVJPnCkh.webp',
     content: `# Tarot vs. Oracle Decks — What's Actually Different
 
 There is a conversation that happens in every metaphysical shop, every online forum, and every quiet corner where people gather to lay cards on velvet cloths—a conversation that circles endlessly around the supposed hierarchy of divination tools. You will hear purists argue that the tarot is the only serious instrument for spiritual inquiry, a rigid architectural marvel that demands years of study, while oracle decks are dismissed as lightweight, unstructured, or overly optimistic. You spend decades in rooms full of stimulation, convinced that what you're seeking is somewhere outside the window, somewhere in the next relationship or the next achievement or the next retreat. And then one morning the seeking just stops. Not because you found anything. Because you got tired enough to be still. Over my thirty-plus years of reading cards, I have watched this debate play out thousands of times, and I can tell you that it almost always misses the fundamental truth of what happens when we sit down to shuffle.
@@ -137,6 +140,7 @@ Notice the resistance. Notice the desire to return to your preferred method. And
     title: 'The Shadow Card Nobody Wants to Talk About',
     readingTime: '8 min read',
     excerpt: 'A deep dive into shadow work through cards, revealing why the card you don\'t want to see is the one you need most.',
+        heroImage: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663309220512/gmij7LjAnhSeEKhviVH9SQ/article-hero-03-3qK7QBrcAfSmKX2TK3QqoL.webp',
     content: `# The Shadow Card Nobody Wants to Talk About
 
 *8 min read*
@@ -182,6 +186,7 @@ This week, I invite you to intentionally seek out a shadow card. Go through your
     title: 'Why Your First Pull Is Almost Always Right',
     readingTime: '8 min read',
     excerpt: 'Learn to trust your initial intuitive responses in card readings by understanding the neuroscience of first impressions and how to differentiate intuition from anxiety.',
+        heroImage: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663309220512/gmij7LjAnhSeEKhviVH9SQ/article-hero-04-WTHcHfbZYdi7WKCsjvmY48.webp',
     content: `# Why Your First Pull Is Almost Always Right
 
 *8 min read*
@@ -254,6 +259,7 @@ What might you learn if you stopped trying to understand so quickly?
     title: 'Jung Knew What Every Card Reader Discovers Eventually',
     readingTime: '8 min read',
     excerpt: 'Connecting Jungian psychology to card reading practice, this article explores the collective unconscious, synchronicity, and archetypes as the foundation of every deck.',
+        heroImage: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663309220512/gmij7LjAnhSeEKhviVH9SQ/article-hero-05-RgxfWMVxrGfeJfkNQrrfkj.webp',
     content: `Jung Knew What Every Card Reader Discovers Eventually
 
 *8 min read*
@@ -314,6 +320,7 @@ This week, I want you to take out a single card that you find challenging or dif
     title: 'The Spread Isn\'t the Point — The Question Is',
     readingTime: '10 min read',
     excerpt: 'The cards can only answer the question you have the courage to ask. Learn to craft questions that unlock real wisdom.',
+        heroImage: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663309220512/gmij7LjAnhSeEKhviVH9SQ/article-hero-06-ECUSQvGrWebH9kGRWVqPSp.webp',
     content: `# The Spread Isn't the Point — The Question Is
 
 **10 min read**
@@ -385,6 +392,7 @@ Now, take a deep breath, and see if you can find a new question. A better questi
     title: 'How to Read for Yourself Without Lying to Yourself',
     readingTime: '8 min read',
     excerpt: 'The challenge of self-reading objectivity, covering confirmation bias, techniques for honest self-reading, and the art of sitting with answers you don\'t want.',
+        heroImage: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663309220512/gmij7LjAnhSeEKhviVH9SQ/article-hero-07-BaDHhCCSgPrEYpPRTSBxLU.webp',
     content: `_8 min read_
 
 # How to Read for Yourself Without Lying to Yourself
@@ -457,6 +465,7 @@ The next time you feel a powerful urge to read for yourself on an emotionally ch
     title: 'What Reversed Cards Actually Mean (It\'s Not What TikTok Says)',
     readingTime: '8 min read',
     excerpt: 'A deep dive into the history and practice of reading reversed tarot cards, moving beyond fear-based interpretations to a more nuanced and empowering approach.',
+        heroImage: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663309220512/gmij7LjAnhSeEKhviVH9SQ/article-hero-08-3hCMcmK4Qu8CxF2fbU8L49.webp',
     content: `_8 min read_
 
 # What Reversed Cards Actually Mean (It's Not What TikTok Says)
@@ -525,6 +534,7 @@ Keep a journal of these readings. Note how this small shift in language changes 
     title: 'Archetypes Are Just Patterns With Better Marketing',
     readingTime: '8 min read',
     excerpt: 'For the first ten years of my three decades reading cards, I avoided the word “archetype” like it was a bill collector.',
+        heroImage: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663309220512/gmij7LjAnhSeEKhviVH9SQ/article-hero-09-dcAa48rZZfo5tfHnSxnsAN.webp',
     content: `# Archetypes Are Just Patterns With Better Marketing
 
 *8 min read*
@@ -561,6 +571,7 @@ So here is your challenge: For the next week, I want you to become an archetype 
     title: 'The Hero\'s Journey Is Happening in Your Deck Right Now',
     readingTime: '9 min read',
     excerpt: 'Campbell\'s monomyth isn\'t just for myths; it\'s a living map of the soul\'s journey happening in your cards right now.',
+        heroImage: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663309220512/gmij7LjAnhSeEKhviVH9SQ/article-hero-10-cRzkin9hmJvoE8aaxR4AkQ.webp',
     content: `# The Hero's Journey Is Happening in Your Deck Right Now
 
 For more than thirty years, I’ve sat with people as they shuffle a deck of cards, their hopes and fears held there in the riffling of paper and potential. They come seeking answers about love, about career, about the disquiet that hums just beneath the surface of their lives, and while the particulars of their stories are always unique—a kaleidoscope of human experience—the underlying structure, the deep grammar of their seeking, is often startlingly familiar. We think our lives are a series of disconnected events, a chaotic tumble of moments, but the cards often reveal a pattern, a hidden narrative arc that has been playing out all along. It’s a story we all know—not the event, not the emotion, but the story we tell ourselves about both—because it’s the story of what it means to be human. 
@@ -629,6 +640,7 @@ This week, I challenge you to do the Journey-Mapping Spread for yourself. But do
     title: 'Oracle Cards Are Not Fortune-Telling — They\'re Mirror-Holding',
     readingTime: '8 min read',
     excerpt: 'The philosophical foundation of oracle work, covering the critical distinction between prediction and reflection.',
+        heroImage: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663309220512/gmij7LjAnhSeEKhviVH9SQ/article-hero-11-Q57T9m69rTg3fD2qFoYryA.webp',
     content: `_8 min read_
 
 # Oracle Cards Are Not Fortune-Telling — They're Mirror-Holding
@@ -694,6 +706,7 @@ This is the practice. Not fortune-telling. It’s mirror-holding. And it is the 
     title: 'How to Build a Daily Card Practice That Actually Sticks',
     readingTime: '8 min read',
     excerpt: 'Learn how to create a simple, sustainable daily card practice that deepens your intuition without demanding perfection.',
+        heroImage: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663309220512/gmij7LjAnhSeEKhviVH9SQ/article-hero-12-aTcK9nV5KvKkPRRtFvj87G.webp',
     content: `_8 min read_
 
 # How to Build a Daily Card Practice That Actually Sticks
@@ -776,6 +789,7 @@ Begin there. The rest will follow. What one small, quiet step can you take today
     title: 'When the Same Card Keeps Showing Up',
     readingTime: '8 min read',
     excerpt: 'A recurring card isn\'t a curse, it\'s a curriculum; the universe doesn\'t repeat itself to be ominous, but because you aren\'t listening.',
+        heroImage: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663309220512/gmij7LjAnhSeEKhviVH9SQ/article-hero-13-cA3Zzzw545GJGyZUD6z3VY.webp',
     content: `# When the Same Card Keeps Showing Up
 
 **8 min read**
@@ -842,6 +856,7 @@ Choose one concrete, tangible action that reflects the card’s core message, an
     title: 'Reading for Other People — The Ethics Nobody Teaches',
     readingTime: '9 min read',
     excerpt: 'A veteran card reader with over 30 years of experience shares the ethical framework that goes beyond knowing the cards, focusing on consent, boundaries, and the profound responsibility of trust.',
+        heroImage: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663309220512/gmij7LjAnhSeEKhviVH9SQ/article-hero-14-H9Yf5EqrXMeC3MgGCeMj6D.webp',
     content: `# Reading for Other People — The Ethics Nobody Teaches
 
 For more than thirty years, I’ve sat across from people as they pull cards, their hopes and fears laid bare on the table between us, a silent conversation held in the space between the images. It’s a profound privilege, this act of witnessing, one that requires a kind of spiritual hygiene that most trainings and books never seem to mention—a framework of ethics that goes far beyond simply knowing what the cards mean. We learn the symbols, the spreads, the stories, but the real work begins when another soul sits before you, vulnerable and open, trusting you to hold their questions with care. That trust is sacred ground.
@@ -896,6 +911,7 @@ So here is your challenge. For the next month, before each reading you conduct, 
     title: 'The Four Decks That Changed How I Read',
     readingTime: '8 min read',
     excerpt: 'Four specific deck archetypes transformed my 30-year reading practice by teaching me new ways of seeing, feeling, and storytelling with the cards.',
+        heroImage: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663309220512/gmij7LjAnhSeEKhviVH9SQ/article-hero-15-U23Y8fxEuuLuQudnVFs5eC.webp',
     content: `
 _8 min read_
 
@@ -959,6 +975,7 @@ Each morning, pull a single card. Do not look up its meaning. Do not try to perf
     title: 'Why I Don\'t Believe in "Bad" Cards',
     readingTime: '9 min read',
     excerpt: 'There are only messages we are not yet ready to hear.',
+        heroImage: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663309220512/gmij7LjAnhSeEKhviVH9SQ/article-hero-16-XAR4poT6M6HssFJwEuqFxi.webp',
     content: `
 Why I Don't Believe in "Bad" Cards
 
@@ -1000,6 +1017,7 @@ For the next seven days, your only task is to live with this card. Don't try to 
     title: 'Symbol Literacy — How to Read Anything Like a Card Reader',
     readingTime: '8 min read',
     excerpt: 'Expand your card-reading skills to everyday life by learning to read the symbolic language of the world around you.',
+        heroImage: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663309220512/gmij7LjAnhSeEKhviVH9SQ/article-hero-17-EtgD98sF6x9vxr3BfuNMV5.webp',
     content: `# Symbol Literacy — How to Read Anything Like a Card Reader
 
 *8 min read*
@@ -1060,6 +1078,7 @@ What would it be like to approach your own life with that same quality of open, 
     title: 'The Difference Between Intuition and Wishful Thinking',
     readingTime: '8 min read',
     excerpt: 'Distinguishing between the two is not merely a technical skill for a card reader; it is the foundational act of spiritual maturity.',
+        heroImage: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663309220512/gmij7LjAnhSeEKhviVH9SQ/article-hero-18-LHaR7bJyHrNBZmtkbQVVhU.webp',
     content: `_8 min read_
 
 # The Difference Between Intuition and Wishful Thinking
@@ -1114,6 +1133,7 @@ This exercise is not about predicting your future. It is about building a somati
     title: 'Clearing Your Deck — What Works and What\'s Superstition',
     readingTime: '8 min read',
     excerpt: 'Practical deck care demystified, covering common clearing methods, the psychology of rituals, and a simple, effective clearing practice anyone can use.',
+        heroImage: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663309220512/gmij7LjAnhSeEKhviVH9SQ/article-hero-19-QqaKGwbUkGP46BaxK7hfzR.webp',
     content: `_8 min read_
 
 # Clearing Your Deck — What Works and What's Superstition
@@ -1188,6 +1208,7 @@ That is all. It is a practice that acknowledges the energetic reality without ge
     title: 'How to Use Oracle Cards for Actual Decision-Making',
     readingTime: '10 min read',
     excerpt: 'Using oracle cards for decision-making isn’t about outsourcing your power; it’s about reclaiming a part of yourself that was never lost, only buried under the noise.',
+        heroImage: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663309220512/gmij7LjAnhSeEKhviVH9SQ/article-hero-20-FfpHSvo5qkRvveBAgQgHPm.webp',
     content: `# How to Use Oracle Cards for Actual Decision-Making
 
 *10 min read*
@@ -1257,6 +1278,7 @@ This is how you learn to read the language of your own life. What is it telling 
     title: 'The Campbell Connection — Myth and Your Card Spread',
     readingTime: '10 min read',
     excerpt: 'Discover how Joseph Campbell\'s Hero\'s Journey can transform your card readings from simple fortune-telling into a profound map of your own mythic journey.',
+        heroImage: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663309220512/gmij7LjAnhSeEKhviVH9SQ/article-hero-21-gQPJppLmKeNJPxwSn8Xf95.webp',
     content: `# The Campbell Connection — Myth and Your Card Spread
 
 **10 min read**
@@ -1285,6 +1307,7 @@ What myth is waiting to be read in your cards, and in your life?
     title: 'What Professional Card Readers Won’t Tell You',
     readingTime: '8 min read',
     excerpt: 'Go behind the velvet curtain and discover the untold realities of professional card reading—it\'s more business than magic.',
+        heroImage: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663309220512/gmij7LjAnhSeEKhviVH9SQ/article-hero-22-N8xv8TLQrNyLG4wnUu4EHo.webp',
     content: `_8 min read_
 
 # What Professional Card Readers Won’t Tell You
@@ -1358,6 +1381,7 @@ At the end of the week, sit down with this log. No judgment, just observation. C
     title: 'The Alchemy of a Good Question',
     readingTime: '8 min read',
     excerpt: 'A deep dive into question-crafting as a transformative practice, exploring why questions are more powerful than answers and how to turn leaden questions into golden ones.',
+        heroImage: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663309220512/gmij7LjAnhSeEKhviVH9SQ/article-hero-23-4XHmoijh5ox7v87FkZgHyd.webp',
     content: `# The Alchemy of a Good Question
 
 We are a culture obsessed with answers, with the clean finality of a solved problem, the intellectual dopamine hit of a correct response. For thirty years, I’ve sat with thousands of people as they come to the cards, their hands trembling slightly, their hearts aching for a definitive ‘yes’ or ‘no,’ for a map that will finally make the territory of their lives legible. They believe, as we are all taught to believe, that the answer is the prize, the destination, the thing that will soothe the agitated mind and settle the restless heart. But the longer I do this work, the more I see that the answer is not the prize at all. The answer is the echo.
@@ -1435,6 +1459,7 @@ This week, I challenge you to a question fast. For seven days, every time you fi
     title: 'Embodied Reading — Why Your Body Matters at the Table',
     readingTime: '11 min read',
     excerpt: 'Discover how your body responds to cards before your mind interprets them and learn somatic awareness techniques to deepen your readings.',
+        heroImage: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663309220512/gmij7LjAnhSeEKhviVH9SQ/article-hero-24-66Ty9xuXwDE8gLmMnA5QfJ.webp',
     content: `_11 min read_
 
 # Embodied Reading — Why Your Body Matters at the Table
@@ -1509,6 +1534,7 @@ Do not leave this as a pleasant idea. Put it into practice. The next time you si
     title: 'Thirty Years of Cards — What I Wish I\'d Known on Day One',
     readingTime: '12 min read',
     excerpt: 'A retrospective wisdom piece on the biggest lessons from three decades of practice, the mistakes made early on, and what actually matters that nobody talks about.',
+        heroImage: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663309220512/gmij7LjAnhSeEKhviVH9SQ/article-hero-25-jCbjop2uZ2f2JUbQRxg3mg.webp',
     content: `_12 min read_
 
 ## Thirty Years of Cards — What I Wish I'd Known on Day One

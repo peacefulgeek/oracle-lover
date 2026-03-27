@@ -2,6 +2,7 @@
  * Layout — Sacred Warmth design
  * Warm cream background, golden accents, elegant serif navigation
  * Cormorant Garamond headings, Outfit body text
+ * NAV: Large, bright, readable on both hero and scrolled states
  */
 import { ReactNode, useState, useEffect } from "react";
 import { Link, useLocation } from "wouter";
@@ -19,7 +20,7 @@ const navLinks = [
   { href: "/connect", label: "Connect" },
 ];
 
-function NavLink({ href, label, onClick }: { href: string; label: string; onClick?: () => void }) {
+function NavLink({ href, label, scrolled, onClick }: { href: string; label: string; scrolled: boolean; onClick?: () => void }) {
   const [location] = useLocation();
   const isActive = href === "/" ? location === "/" : location.startsWith(href);
 
@@ -27,19 +28,34 @@ function NavLink({ href, label, onClick }: { href: string; label: string; onClic
     <Link
       href={href}
       onClick={onClick}
-      className={`relative text-[0.8rem] tracking-[0.15em] uppercase transition-colors duration-300 ${
-        isActive
-          ? "text-plum"
-          : "text-plum-deep/70 hover:text-plum"
-      }`}
-      style={{ fontFamily: "var(--font-body)", fontWeight: 500 }}
+      className="relative transition-all duration-300"
+      style={{
+        fontFamily: "var(--font-body)",
+        fontWeight: 500,
+        fontSize: "0.95rem",
+        letterSpacing: "0.08em",
+        textTransform: "uppercase" as const,
+        color: isActive
+          ? (scrolled ? "oklch(0.55 0.15 320)" : "oklch(0.85 0.12 75)")
+          : (scrolled ? "oklch(0.40 0.06 320)" : "oklch(0.95 0.02 80 / 0.85)"),
+      }}
+      onMouseEnter={(e) => {
+        (e.target as HTMLElement).style.color = scrolled
+          ? "oklch(0.55 0.15 320)"
+          : "oklch(0.85 0.12 75)";
+      }}
+      onMouseLeave={(e) => {
+        (e.target as HTMLElement).style.color = isActive
+          ? (scrolled ? "oklch(0.55 0.15 320)" : "oklch(0.85 0.12 75)")
+          : (scrolled ? "oklch(0.40 0.06 320)" : "oklch(0.95 0.02 80 / 0.85)");
+      }}
     >
       {label}
       {isActive && (
         <motion.span
           layoutId="nav-underline"
           className="absolute -bottom-1 left-0 right-0 h-[2px] rounded-full"
-          style={{ background: "oklch(0.78 0.14 75)" }}
+          style={{ background: scrolled ? "oklch(0.55 0.15 320)" : "oklch(0.85 0.12 75)" }}
           transition={{ type: "spring", stiffness: 380, damping: 30 }}
         />
       )}
@@ -68,25 +84,25 @@ export default function Layout({ children }: { children: ReactNode }) {
       {/* Header */}
       <header
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-          scrolled
-            ? "py-3 backdrop-blur-xl"
-            : "py-5"
+          scrolled ? "py-3" : "py-5"
         }`}
         style={{
           background: scrolled
-            ? "oklch(0.96 0.02 80 / 0.92)"
-            : "transparent",
+            ? "oklch(0.96 0.02 80 / 0.95)"
+            : "linear-gradient(180deg, oklch(0.15 0.05 310 / 0.6) 0%, transparent 100%)",
+          backdropFilter: scrolled ? "blur(20px)" : "none",
           borderBottom: scrolled ? "1px solid oklch(0.78 0.14 75 / 0.15)" : "none",
         }}
       >
         <div className="container flex items-center justify-between">
           <Link href="/" className="flex items-center gap-3 group">
             <span
-              className="text-2xl lg:text-[1.7rem] tracking-tight transition-colors duration-300"
+              className="text-2xl lg:text-[1.8rem] tracking-tight transition-colors duration-300"
               style={{
                 fontFamily: "var(--font-display)",
                 fontWeight: 600,
-                color: "oklch(0.35 0.12 320)",
+                color: scrolled ? "oklch(0.35 0.12 320)" : "oklch(0.95 0.02 80)",
+                textShadow: scrolled ? "none" : "0 1px 8px oklch(0.15 0.05 310 / 0.4)",
               }}
             >
               The Oracle Lover
@@ -94,9 +110,9 @@ export default function Layout({ children }: { children: ReactNode }) {
           </Link>
 
           {/* Desktop nav */}
-          <nav className="hidden lg:flex items-center gap-8">
+          <nav className="hidden lg:flex items-center gap-9">
             {navLinks.map((link) => (
-              <NavLink key={link.href} href={link.href} label={link.label} />
+              <NavLink key={link.href} href={link.href} label={link.label} scrolled={scrolled} />
             ))}
           </nav>
 
@@ -104,10 +120,10 @@ export default function Layout({ children }: { children: ReactNode }) {
           <button
             onClick={() => setMobileOpen(!mobileOpen)}
             className="lg:hidden p-2 rounded-lg transition-colors"
-            style={{ color: "oklch(0.35 0.12 320)" }}
+            style={{ color: scrolled ? "oklch(0.35 0.12 320)" : "oklch(0.95 0.02 80)" }}
             aria-label="Toggle menu"
           >
-            {mobileOpen ? <X size={24} /> : <Menu size={24} />}
+            {mobileOpen ? <X size={26} /> : <Menu size={26} />}
           </button>
         </div>
 
@@ -124,7 +140,7 @@ export default function Layout({ children }: { children: ReactNode }) {
             >
               <div className="container py-6 flex flex-col gap-5">
                 {navLinks.map((link) => (
-                  <NavLink key={link.href} href={link.href} label={link.label} onClick={() => setMobileOpen(false)} />
+                  <NavLink key={link.href} href={link.href} label={link.label} scrolled={true} onClick={() => setMobileOpen(false)} />
                 ))}
               </div>
             </motion.nav>
@@ -207,32 +223,25 @@ export default function Layout({ children }: { children: ReactNode }) {
                 Beyond
               </h4>
               <nav className="flex flex-col gap-3">
-                <a
-                  href="https://theshankaraexperience.com"
-                  target="_blank"
-                  rel="noopener noreferrer"
+                <a href="https://theshankaraexperience.com" target="_blank" rel="noopener noreferrer"
                   className="text-sm transition-colors duration-300 hover:!text-gold"
-                  style={{ fontFamily: "var(--font-body)", color: "oklch(0.96 0.02 80 / 0.55)" }}
-                >
-                  The Shankara Experience
+                  style={{ fontFamily: "var(--font-body)", color: "oklch(0.96 0.02 80 / 0.55)" }}>
+                  The Shankara Oracle
                 </a>
-                <a
-                  href="https://theshankaraoracleapp.com"
-                  target="_blank"
-                  rel="noopener noreferrer"
+                <a href="https://thepersonalitycards.com" target="_blank" rel="noopener noreferrer"
                   className="text-sm transition-colors duration-300 hover:!text-gold"
-                  style={{ fontFamily: "var(--font-body)", color: "oklch(0.96 0.02 80 / 0.55)" }}
-                >
-                  The Oracle App
+                  style={{ fontFamily: "var(--font-body)", color: "oklch(0.96 0.02 80 / 0.55)" }}>
+                  The Personality Cards
                 </a>
-                <a
-                  href="https://paulwagner.com"
-                  target="_blank"
-                  rel="noopener noreferrer"
+                <a href="https://paulwagner.com/readings" target="_blank" rel="noopener noreferrer"
                   className="text-sm transition-colors duration-300 hover:!text-gold"
-                  style={{ fontFamily: "var(--font-body)", color: "oklch(0.96 0.02 80 / 0.55)" }}
-                >
-                  Main Site
+                  style={{ fontFamily: "var(--font-body)", color: "oklch(0.96 0.02 80 / 0.55)" }}>
+                  Sessions &amp; Readings
+                </a>
+                <a href="https://paulwagner.com" target="_blank" rel="noopener noreferrer"
+                  className="text-sm transition-colors duration-300 hover:!text-gold"
+                  style={{ fontFamily: "var(--font-body)", color: "oklch(0.96 0.02 80 / 0.55)" }}>
+                  PaulWagner.com
                 </a>
               </nav>
             </div>
