@@ -15,13 +15,14 @@ const AUTHOR_PHOTO = "https://d2xsxph8kpxj0f.cloudfront.net/310519663309220512/g
 const HERO_IMG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663309220512/gmij7LjAnhSeEKhviVH9SQ/journal-morning-light-dZqVkwqgfEqPNiPNSMqRYL.webp";
 
 function getCategory(slug: string): string {
+  if (slug.includes("thyroid") || slug.includes("inflammatory") || slug.includes("nervine") || slug.includes("apothecary") || slug.includes("herb") || slug.includes("adaptogen") || slug.includes("supplement") || slug.includes("healing") || slug.includes("wellness") || slug.includes("ayurved") || slug.includes("detox") || slug.includes("immune") || slug.includes("gut") || slug.includes("sleep") || slug.includes("anxiety") || slug.includes("stress-relief") || slug.includes("anti-") || slug.includes("holistic") || slug.includes("natural-remed") || slug.includes("medicin")) return "Health & Wellness";
   if (slug.includes("tarot") || slug.includes("spread") || slug.includes("daily") || slug.includes("practice") || slug.includes("choose") || slug.includes("cleanse") || slug.includes("clearing") || slug.includes("journal") || slug.includes("decision")) return "Practice";
   if (slug.includes("jung") || slug.includes("campbell") || slug.includes("hero") || slug.includes("archetype") || slug.includes("shadow") || slug.includes("myth") || slug.includes("symbol") || slug.includes("alchemy")) return "Philosophy";
   if (slug.includes("intuition") || slug.includes("emotion") || slug.includes("fear") || slug.includes("ego") || slug.includes("mirror") || slug.includes("wishful") || slug.includes("embodied") || slug.includes("body")) return "Inner Work";
   return "Foundation";
 }
 
-const categories = ["All", "Foundation", "Practice", "Philosophy", "Inner Work"];
+const categories = ["All", "Foundation", "Practice", "Philosophy", "Inner Work", "Health & Wellness"];
 
 export default function Articles() {
   const [active, setActive] = useState("All");

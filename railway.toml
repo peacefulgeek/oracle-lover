@@ -11,3 +11,13 @@ restartPolicyMaxRetries = 3
 
 [service]
 internalPort = 3000
+
+# ═══════════════════════════════════════════════════════════════
+# REQUIRED ENV VARS — Set these in Railway dashboard:
+# ═══════════════════════════════════════════════════════════════
+# ANTHROPIC_API_KEY     — Claude API key for article generation
+# FAL_API_KEY           — FAL.ai key for hero image generation
+# GH_PAT               — GitHub PAT for auto-push to peacefulgeek/oracle-lover
+# BUNNY_STORAGE_KEY     — Bunny CDN storage API key (oracle-lover zone)
+# AUTO_GEN_ENABLED      — Set to "true" to enable weekly article generation
+# ═══════════════════════════════════════════════════════════════
