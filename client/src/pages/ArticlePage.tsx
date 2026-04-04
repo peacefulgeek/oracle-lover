@@ -7,7 +7,8 @@ import Layout from "@/components/Layout";
 import SEO from "@/components/SEO";
 import { Link, useParams } from "wouter";
 import { motion } from "framer-motion";
-import { articles } from "@/data/articles";
+import { useArticle, useArticles } from "@/hooks/useArticles";
+import { ArticlePageSkeleton } from "@/components/ArticleSkeleton";
 import MarkdownRenderer from "@/components/MarkdownRenderer";
 import { ArrowLeft, ArrowRight, BookOpen, Sparkles, Users, ExternalLink } from "lucide-react";
 import { useEffect } from "react";
@@ -18,15 +19,19 @@ const MANDALA_IMG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663309220512/gm
 export default function ArticlePage() {
   const params = useParams<{ slug: string }>();
   const slug = params.slug;
-  const publishedArticles = articles.filter((a) => !a.status || a.status === 'published' || (a.status === 'draft' && a.scheduledDate && new Date(a.scheduledDate) <= new Date()));
-  const article = articles.find((a) => a.slug === slug);
-  const pubIdx = publishedArticles.findIndex((a) => a.slug === slug);
-  const prev = pubIdx > 0 ? publishedArticles[pubIdx - 1] : null;
-  const next = pubIdx < publishedArticles.length - 1 ? publishedArticles[pubIdx + 1] : null;
+  const { article, loading: articleLoading } = useArticle(slug);
+  const { articles: allArticles } = useArticles();
+  const pubIdx = allArticles.findIndex((a) => a.slug === slug);
+  const prev = pubIdx > 0 ? allArticles[pubIdx - 1] : null;
+  const next = pubIdx < allArticles.length - 1 ? allArticles[pubIdx + 1] : null;
 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [slug]);
+
+  if (articleLoading) {
+    return <Layout><ArticlePageSkeleton /></Layout>;
+  }
 
   if (!article) {
     return (
@@ -54,7 +59,7 @@ export default function ArticlePage() {
           section: "Oracle Education",
           tags: ["oracle cards", "self-inquiry", "intuition", "card reading"],
           readingTime: article.readingTime,
-          wordCount: article.content.split(/\s+/).length,
+          wordCount: (article.content || '').split(/\s+/).length,
           publishedTime: "2026-03-27",
         }}
       />
@@ -140,7 +145,7 @@ export default function ArticlePage() {
 
             {/* Article Body */}
             <div className="article-prose drop-cap">
-              <MarkdownRenderer content={article.content} />
+              <MarkdownRenderer content={article.content || ''} />
             </div>
 
             {/* End ornament */}
@@ -363,7 +368,7 @@ export default function ArticlePage() {
                   More Articles
                 </h4>
                 <div className="space-y-3">
-                  {articles
+                  {allArticles
                     .filter((a) => a.slug !== article.slug)
                     .slice(0, 4)
                     .map((a) => (

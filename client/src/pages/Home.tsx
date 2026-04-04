@@ -6,7 +6,8 @@ import Layout from "@/components/Layout";
 import SEO from "@/components/SEO";
 import { Link } from "wouter";
 import { motion } from "framer-motion";
-import { articles } from "@/data/articles";
+import { useArticles } from "@/hooks/useArticles";
+import { ArticleCardSkeleton } from "@/components/ArticleSkeleton";
 import { ArrowRight, BookOpen, Compass, Sparkles } from "lucide-react";
 
 const HERO_IMG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663309220512/gmij7LjAnhSeEKhviVH9SQ/hero-sacred-light-23Gw9cKdGiYwbrdJyc4aEn.webp";
@@ -25,7 +26,7 @@ const fadeUp = {
   }),
 };
 
-const recentArticles = articles.filter((a) => !a.status || a.status === 'published' || (a.status === 'draft' && a.scheduledDate && new Date(a.scheduledDate) <= new Date())).slice(0, 6);
+
 
 const pathways = [
   {
@@ -52,6 +53,9 @@ const pathways = [
 ];
 
 export default function Home() {
+  const { articles, loading } = useArticles();
+  const recentArticles = articles.slice(0, 6);
+
   return (
     <Layout>
       <SEO url="/" />
@@ -330,7 +334,9 @@ export default function Home() {
         </motion.div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
-          {recentArticles.map((article, i) => (
+          {loading ? (
+            [...Array(6)].map((_, i) => <ArticleCardSkeleton key={i} />)
+          ) : (recentArticles.map((article, i) => (
             <motion.div
               key={article.slug}
               initial="hidden"
@@ -390,7 +396,7 @@ export default function Home() {
                 </article>
               </Link>
             </motion.div>
-          ))}
+          )))}
         </div>
       </section>
 

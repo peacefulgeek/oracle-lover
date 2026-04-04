@@ -7,7 +7,8 @@ import Layout from "@/components/Layout";
 import SEO from "@/components/SEO";
 import { Link } from "wouter";
 import { motion } from "framer-motion";
-import { articles } from "@/data/articles";
+import { useArticles } from "@/hooks/useArticles";
+import { ArticleCardSkeleton } from "@/components/ArticleSkeleton";
 import { BookOpen, Sparkles, Users, ExternalLink, Clock, ArrowRight } from "lucide-react";
 import { useState } from "react";
 
@@ -26,15 +27,10 @@ const categories = ["All", "Foundation", "Practice", "Philosophy", "Inner Work",
 
 export default function Articles() {
   const [active, setActive] = useState("All");
+  const { articles, loading } = useArticles();
 
-  // Only show published articles (exclude drafts not yet past their scheduledDate)
-  const publishedArticles = articles.filter((a) => {
-    if (!a.status || a.status === 'published') return true;
-    if (a.status === 'draft' && a.scheduledDate) {
-      return new Date(a.scheduledDate) <= new Date();
-    }
-    return false;
-  });
+  // API already returns only published articles
+  const publishedArticles = articles;
 
   const filtered = active === "All"
     ? publishedArticles
@@ -131,7 +127,9 @@ export default function Articles() {
           {/* Articles Grid */}
           <div className="flex-1 min-w-0">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-              {filtered.map((article, i) => (
+              {loading ? (
+                [...Array(6)].map((_, i) => <ArticleCardSkeleton key={i} />)
+              ) : (filtered.map((article, i) => (
                 <motion.div
                   key={article.slug}
                   initial={{ opacity: 0, y: 20 }}
@@ -218,7 +216,7 @@ export default function Articles() {
                     </div>
                   </Link>
                 </motion.div>
-              ))}
+              )))}
             </div>
 
             {/* Count */}
