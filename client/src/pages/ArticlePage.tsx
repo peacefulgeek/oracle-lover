@@ -18,10 +18,11 @@ const MANDALA_IMG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663309220512/gm
 export default function ArticlePage() {
   const params = useParams<{ slug: string }>();
   const slug = params.slug;
-  const idx = articles.findIndex((a) => a.slug === slug);
-  const article = articles[idx];
-  const prev = idx > 0 ? articles[idx - 1] : null;
-  const next = idx < articles.length - 1 ? articles[idx + 1] : null;
+  const publishedArticles = articles.filter((a) => !a.status || a.status === 'published' || (a.status === 'draft' && a.scheduledDate && new Date(a.scheduledDate) <= new Date()));
+  const article = articles.find((a) => a.slug === slug);
+  const pubIdx = publishedArticles.findIndex((a) => a.slug === slug);
+  const prev = pubIdx > 0 ? publishedArticles[pubIdx - 1] : null;
+  const next = pubIdx < publishedArticles.length - 1 ? publishedArticles[pubIdx + 1] : null;
 
   useEffect(() => {
     window.scrollTo(0, 0);

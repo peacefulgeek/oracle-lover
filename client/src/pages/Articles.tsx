@@ -26,9 +26,18 @@ const categories = ["All", "Foundation", "Practice", "Philosophy", "Inner Work"]
 export default function Articles() {
   const [active, setActive] = useState("All");
 
+  // Only show published articles (exclude drafts not yet past their scheduledDate)
+  const publishedArticles = articles.filter((a) => {
+    if (!a.status || a.status === 'published') return true;
+    if (a.status === 'draft' && a.scheduledDate) {
+      return new Date(a.scheduledDate) <= new Date();
+    }
+    return false;
+  });
+
   const filtered = active === "All"
-    ? articles
-    : articles.filter((a) => getCategory(a.slug) === active);
+    ? publishedArticles
+    : publishedArticles.filter((a) => getCategory(a.slug) === active);
 
   return (
     <Layout>
@@ -58,7 +67,7 @@ export default function Articles() {
                 className="text-xs tracking-[0.2em] uppercase mb-3"
                 style={{ fontFamily: "var(--font-body)", fontWeight: 500, color: "oklch(0.82 0.12 75)" }}
               >
-                {articles.length} Articles
+                {publishedArticles.length} Articles
               </p>
               <h1
                 className="text-3xl sm:text-4xl lg:text-5xl mb-3"
@@ -214,7 +223,7 @@ export default function Articles() {
             {/* Count */}
             <div className="text-center mt-10">
               <p className="text-sm" style={{ fontFamily: "var(--font-body)", color: "oklch(0.60 0.04 310)" }}>
-                Showing {filtered.length} of {articles.length} articles
+                Showing {filtered.length} of {publishedArticles.length} articles
               </p>
             </div>
           </div>

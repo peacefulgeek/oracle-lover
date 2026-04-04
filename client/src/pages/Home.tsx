@@ -25,7 +25,7 @@ const fadeUp = {
   }),
 };
 
-const recentArticles = articles.slice(0, 6);
+const recentArticles = articles.filter((a) => !a.status || a.status === 'published' || (a.status === 'draft' && a.scheduledDate && new Date(a.scheduledDate) <= new Date())).slice(0, 6);
 
 const pathways = [
   {
