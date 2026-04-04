@@ -6,7 +6,7 @@ import Layout from "@/components/Layout";
 import SEO from "@/components/SEO";
 import { Link } from "wouter";
 import { motion } from "framer-motion";
-import { articles } from "@/data/articles";
+import { useArticles } from "@/hooks/useArticles";
 import { ArrowRight } from "lucide-react";
 
 const JOURNAL_IMG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663309220512/gmij7LjAnhSeEKhviVH9SQ/journal-morning-light-hSaczLzYiDM9V2VLP2ipAc.webp";
@@ -21,6 +21,7 @@ const curatedSlugs = [
 ];
 
 export default function StartHere() {
+  const { articles, loading } = useArticles();
   const curatedArticles = curatedSlugs
     .map((item) => ({ ...item, article: articles.find((a) => a.slug === item.slug) }))
     .filter((item) => item.article);

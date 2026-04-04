@@ -11,8 +11,8 @@ import Articles from "./pages/Articles";
 import ArticlePage from "./pages/ArticlePage";
 import TheOracle from "./pages/TheOracle";
 import Connect from "./pages/Connect";
-
 function Router() {
+  // make sure to consider if you need authentication for certain routes
   return (
     <Switch>
       <Route path="/" component={Home} />

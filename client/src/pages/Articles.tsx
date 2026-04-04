@@ -2,19 +2,28 @@
  * Articles — Sacred Warmth
  * 2-column layout: article grid left, author bio sidebar upper right
  * Rich cards with hero images, warm design
+ * Fetches articles from /api/articles (MySQL-backed)
  */
 import Layout from "@/components/Layout";
 import SEO from "@/components/SEO";
 import { Link } from "wouter";
 import { motion } from "framer-motion";
-import { articles } from "@/data/articles";
+import { useArticles, type Article } from "@/hooks/useArticles";
+import { ArticleCardSkeleton } from "@/components/ArticleSkeleton";
 import { BookOpen, Sparkles, Users, ExternalLink, Clock, ArrowRight } from "lucide-react";
 import { useState } from "react";
 
 const AUTHOR_PHOTO = "https://d2xsxph8kpxj0f.cloudfront.net/310519663309220512/gmij7LjAnhSeEKhviVH9SQ/paul-wagner-bio_14ff429f.webp";
 const HERO_IMG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663309220512/gmij7LjAnhSeEKhviVH9SQ/journal-morning-light-dZqVkwqgfEqPNiPNSMqRYL.webp";
 
-function getCategory(slug: string): string {
+function getCategory(article: Article): string {
+  // Use DB category if available and meaningful
+  if (article.category && article.category !== "general") {
+    if (article.category === "health") return "Health & Wellness";
+    return article.category;
+  }
+  // Fallback: derive from slug
+  const slug = article.slug;
   if (slug.includes("thyroid") || slug.includes("inflammatory") || slug.includes("nervine") || slug.includes("apothecary") || slug.includes("herb") || slug.includes("adaptogen") || slug.includes("supplement") || slug.includes("healing") || slug.includes("wellness") || slug.includes("ayurved") || slug.includes("detox") || slug.includes("immune") || slug.includes("gut") || slug.includes("sleep") || slug.includes("anxiety") || slug.includes("stress-relief") || slug.includes("anti-") || slug.includes("holistic") || slug.includes("natural-remed") || slug.includes("medicin")) return "Health & Wellness";
   if (slug.includes("tarot") || slug.includes("spread") || slug.includes("daily") || slug.includes("practice") || slug.includes("choose") || slug.includes("cleanse") || slug.includes("clearing") || slug.includes("journal") || slug.includes("decision")) return "Practice";
   if (slug.includes("jung") || slug.includes("campbell") || slug.includes("hero") || slug.includes("archetype") || slug.includes("shadow") || slug.includes("myth") || slug.includes("symbol") || slug.includes("alchemy")) return "Philosophy";
@@ -26,19 +35,11 @@ const categories = ["All", "Foundation", "Practice", "Philosophy", "Inner Work",
 
 export default function Articles() {
   const [active, setActive] = useState("All");
-
-  // Only show published articles (exclude drafts not yet past their scheduledDate)
-  const publishedArticles = articles.filter((a) => {
-    if (!a.status || a.status === 'published') return true;
-    if (a.status === 'draft' && a.scheduledDate) {
-      return new Date(a.scheduledDate) <= new Date();
-    }
-    return false;
-  });
+  const { articles, loading, error } = useArticles();
 
   const filtered = active === "All"
-    ? publishedArticles
-    : publishedArticles.filter((a) => getCategory(a.slug) === active);
+    ? articles
+    : articles.filter((a) => getCategory(a) === active);
 
   return (
     <Layout>
@@ -68,7 +69,7 @@ export default function Articles() {
                 className="text-xs tracking-[0.2em] uppercase mb-3"
                 style={{ fontFamily: "var(--font-body)", fontWeight: 500, color: "oklch(0.82 0.12 75)" }}
               >
-                {publishedArticles.length} Articles
+                {articles.length} Articles
               </p>
               <h1
                 className="text-3xl sm:text-4xl lg:text-5xl mb-3"
@@ -130,103 +131,119 @@ export default function Articles() {
 
           {/* Articles Grid */}
           <div className="flex-1 min-w-0">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-              {filtered.map((article, i) => (
-                <motion.div
-                  key={article.slug}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: Math.min(i * 0.05, 0.5) }}
-                >
-                  <Link href={`/articles/${article.slug}`} className="block group h-full">
-                    <div
-                      className="rounded-2xl overflow-hidden h-full transition-all duration-400 group-hover:-translate-y-1"
-                      style={{
-                        background: "oklch(0.98 0.01 75)",
-                        border: "1px solid oklch(0.78 0.14 75 / 0.12)",
-                        boxShadow: "0 2px 12px oklch(0.78 0.14 75 / 0.06)",
-                      }}
+            {loading ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                {[...Array(6)].map((_, i) => (
+                  <ArticleCardSkeleton key={i} />
+                ))}
+              </div>
+            ) : error && articles.length === 0 ? (
+              <div className="text-center py-16">
+                <p style={{ fontFamily: "var(--font-body)", color: "oklch(0.50 0.04 310)" }}>
+                  Unable to load articles. Please try again later.
+                </p>
+              </div>
+            ) : (
+              <>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                  {filtered.map((article, i) => (
+                    <motion.div
+                      key={article.slug}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.5, delay: Math.min(i * 0.05, 0.5) }}
                     >
-                      {/* Card Image */}
-                      <div className="relative overflow-hidden" style={{ height: "180px" }}>
-                        <img
-                          src={article.heroImage}
-                          alt={article.title}
-                          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                        />
+                      <Link href={`/articles/${article.slug}`} className="block group h-full">
                         <div
-                          className="absolute inset-0"
+                          className="rounded-2xl overflow-hidden h-full transition-all duration-400 group-hover:-translate-y-1"
                           style={{
-                            background: "linear-gradient(to top, oklch(0.15 0.04 310 / 0.3) 0%, transparent 50%)",
-                          }}
-                        />
-                        {/* Category badge */}
-                        <span
-                          className="absolute top-3 left-3 px-2.5 py-1 rounded-full text-[0.6rem] tracking-[0.1em] uppercase backdrop-blur-sm"
-                          style={{
-                            fontFamily: "var(--font-body)",
-                            fontWeight: 600,
-                            background: "oklch(0.98 0.01 75 / 0.85)",
-                            color: "oklch(0.45 0.08 310)",
+                            background: "oklch(0.98 0.01 75)",
+                            border: "1px solid oklch(0.78 0.14 75 / 0.12)",
+                            boxShadow: "0 2px 12px oklch(0.78 0.14 75 / 0.06)",
                           }}
                         >
-                          {getCategory(article.slug)}
-                        </span>
-                      </div>
+                          {/* Card Image */}
+                          <div className="relative overflow-hidden" style={{ height: "180px" }}>
+                            <img
+                              src={article.heroImage}
+                              alt={article.title}
+                              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                            />
+                            <div
+                              className="absolute inset-0"
+                              style={{
+                                background: "linear-gradient(to top, oklch(0.15 0.04 310 / 0.3) 0%, transparent 50%)",
+                              }}
+                            />
+                            {/* Category badge */}
+                            <span
+                              className="absolute top-3 left-3 px-2.5 py-1 rounded-full text-[0.6rem] tracking-[0.1em] uppercase backdrop-blur-sm"
+                              style={{
+                                fontFamily: "var(--font-body)",
+                                fontWeight: 600,
+                                background: "oklch(0.98 0.01 75 / 0.85)",
+                                color: "oklch(0.45 0.08 310)",
+                              }}
+                            >
+                              {getCategory(article)}
+                            </span>
+                          </div>
 
-                      {/* Card Content */}
-                      <div className="p-5">
-                        <div className="flex items-center gap-2 mb-3">
-                          <Clock size={12} style={{ color: "oklch(0.60 0.06 310)" }} />
-                          <p
-                            className="text-xs tracking-[0.1em] uppercase"
-                            style={{ fontFamily: "var(--font-body)", fontWeight: 500, color: "oklch(0.60 0.06 310)" }}
-                          >
-                            {article.readingTime}
-                          </p>
+                          {/* Card Content */}
+                          <div className="p-5">
+                            <div className="flex items-center gap-2 mb-3">
+                              <Clock size={12} style={{ color: "oklch(0.60 0.06 310)" }} />
+                              <p
+                                className="text-xs tracking-[0.1em] uppercase"
+                                style={{ fontFamily: "var(--font-body)", fontWeight: 500, color: "oklch(0.60 0.06 310)" }}
+                              >
+                                {article.readingTime}
+                              </p>
+                            </div>
+                            <h3
+                              className="text-base mb-2 transition-colors duration-300 group-hover:text-amber-700"
+                              style={{
+                                fontFamily: "var(--font-display)",
+                                fontWeight: 600,
+                                color: "oklch(0.28 0.06 310)",
+                                lineHeight: 1.3,
+                              }}
+                            >
+                              {article.title}
+                            </h3>
+                            <p
+                              className="text-sm line-clamp-3"
+                              style={{
+                                fontFamily: "var(--font-body)",
+                                color: "oklch(0.48 0.03 310)",
+                                lineHeight: 1.6,
+                              }}
+                            >
+                              {article.excerpt}
+                            </p>
+                            <div className="mt-3 flex items-center gap-1">
+                              <span
+                                className="text-xs tracking-wide transition-all duration-300 group-hover:gap-2 inline-flex items-center gap-1"
+                                style={{ fontFamily: "var(--font-body)", fontWeight: 500, color: "oklch(0.78 0.14 75)" }}
+                              >
+                                Read article <ArrowRight size={12} />
+                              </span>
+                            </div>
+                          </div>
                         </div>
-                        <h3
-                          className="text-base mb-2 transition-colors duration-300 group-hover:text-amber-700"
-                          style={{
-                            fontFamily: "var(--font-display)",
-                            fontWeight: 600,
-                            color: "oklch(0.28 0.06 310)",
-                            lineHeight: 1.3,
-                          }}
-                        >
-                          {article.title}
-                        </h3>
-                        <p
-                          className="text-sm line-clamp-3"
-                          style={{
-                            fontFamily: "var(--font-body)",
-                            color: "oklch(0.48 0.03 310)",
-                            lineHeight: 1.6,
-                          }}
-                        >
-                          {article.excerpt}
-                        </p>
-                        <div className="mt-3 flex items-center gap-1">
-                          <span
-                            className="text-xs tracking-wide transition-all duration-300 group-hover:gap-2 inline-flex items-center gap-1"
-                            style={{ fontFamily: "var(--font-body)", fontWeight: 500, color: "oklch(0.78 0.14 75)" }}
-                          >
-                            Read article <ArrowRight size={12} />
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  </Link>
-                </motion.div>
-              ))}
-            </div>
+                      </Link>
+                    </motion.div>
+                  ))}
+                </div>
 
-            {/* Count */}
-            <div className="text-center mt-10">
-              <p className="text-sm" style={{ fontFamily: "var(--font-body)", color: "oklch(0.60 0.04 310)" }}>
-                Showing {filtered.length} of {publishedArticles.length} articles
-              </p>
-            </div>
+                {/* Count */}
+                <div className="text-center mt-10">
+                  <p className="text-sm" style={{ fontFamily: "var(--font-body)", color: "oklch(0.60 0.04 310)" }}>
+                    Showing {filtered.length} of {articles.length} articles
+                  </p>
+                </div>
+              </>
+            )}
           </div>
 
           {/* Sticky Sidebar */}

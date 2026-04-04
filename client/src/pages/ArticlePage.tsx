@@ -2,15 +2,17 @@
  * ArticlePage — Sacred Warmth
  * 2-column layout: article body left, sticky author sidebar right
  * Full hero image, rich typography, prev/next navigation
+ * Fetches articles from /api/articles (MySQL-backed)
  */
 import Layout from "@/components/Layout";
 import SEO from "@/components/SEO";
 import { Link, useParams } from "wouter";
 import { motion } from "framer-motion";
-import { articles } from "@/data/articles";
+import { useArticles, useArticle } from "@/hooks/useArticles";
+import { ArticlePageSkeleton } from "@/components/ArticleSkeleton";
 import MarkdownRenderer from "@/components/MarkdownRenderer";
 import { ArrowLeft, ArrowRight, BookOpen, Sparkles, Users, ExternalLink } from "lucide-react";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 
 const AUTHOR_PHOTO = "https://d2xsxph8kpxj0f.cloudfront.net/310519663309220512/gmij7LjAnhSeEKhviVH9SQ/paul-wagner-bio_14ff429f.webp";
 const MANDALA_IMG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663309220512/gmij7LjAnhSeEKhviVH9SQ/golden-mandala-nHw5UU8ArX4swxcUEgwBqh.webp";
@@ -18,15 +20,31 @@ const MANDALA_IMG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663309220512/gm
 export default function ArticlePage() {
   const params = useParams<{ slug: string }>();
   const slug = params.slug;
-  const publishedArticles = articles.filter((a) => !a.status || a.status === 'published' || (a.status === 'draft' && a.scheduledDate && new Date(a.scheduledDate) <= new Date()));
-  const article = articles.find((a) => a.slug === slug);
-  const pubIdx = publishedArticles.findIndex((a) => a.slug === slug);
-  const prev = pubIdx > 0 ? publishedArticles[pubIdx - 1] : null;
-  const next = pubIdx < publishedArticles.length - 1 ? publishedArticles[pubIdx + 1] : null;
+  const { article, loading: articleLoading } = useArticle(slug);
+  const { articles, loading: articlesLoading } = useArticles();
+
+  // Compute prev/next from the full articles list
+  const { prev, next, sidebarArticles } = useMemo(() => {
+    if (!articles.length || !slug) return { prev: null, next: null, sidebarArticles: [] };
+    const idx = articles.findIndex((a) => a.slug === slug);
+    return {
+      prev: idx > 0 ? articles[idx - 1] : null,
+      next: idx >= 0 && idx < articles.length - 1 ? articles[idx + 1] : null,
+      sidebarArticles: articles.filter((a) => a.slug !== slug).slice(0, 4),
+    };
+  }, [articles, slug]);
 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [slug]);
+
+  if (articleLoading) {
+    return (
+      <Layout>
+        <ArticlePageSkeleton />
+      </Layout>
+    );
+  }
 
   if (!article) {
     return (
@@ -349,24 +367,22 @@ export default function ArticlePage() {
               </div>
 
               {/* Recent Articles */}
-              <div
-                className="rounded-2xl p-5"
-                style={{
-                  background: "oklch(0.97 0.01 75 / 0.6)",
-                  border: "1px solid oklch(0.78 0.14 75 / 0.10)",
-                }}
-              >
-                <h4
-                  className="text-xs tracking-[0.15em] uppercase mb-4"
-                  style={{ fontFamily: "var(--font-body)", fontWeight: 600, color: "oklch(0.50 0.06 310)" }}
+              {!articlesLoading && sidebarArticles.length > 0 && (
+                <div
+                  className="rounded-2xl p-5"
+                  style={{
+                    background: "oklch(0.97 0.01 75 / 0.6)",
+                    border: "1px solid oklch(0.78 0.14 75 / 0.10)",
+                  }}
                 >
-                  More Articles
-                </h4>
-                <div className="space-y-3">
-                  {articles
-                    .filter((a) => a.slug !== article.slug)
-                    .slice(0, 4)
-                    .map((a) => (
+                  <h4
+                    className="text-xs tracking-[0.15em] uppercase mb-4"
+                    style={{ fontFamily: "var(--font-body)", fontWeight: 600, color: "oklch(0.50 0.06 310)" }}
+                  >
+                    More Articles
+                  </h4>
+                  <div className="space-y-3">
+                    {sidebarArticles.map((a) => (
                       <Link
                         key={a.slug}
                         href={`/articles/${a.slug}`}
@@ -387,8 +403,9 @@ export default function ArticlePage() {
                         </div>
                       </Link>
                     ))}
+                  </div>
                 </div>
-              </div>
+              )}
 
             </div>
           </motion.aside>
