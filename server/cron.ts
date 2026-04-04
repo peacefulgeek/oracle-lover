@@ -1,21 +1,32 @@
 import cron from "node-cron";
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
 import https from "https";
 import http from "http";
-import { insertArticle, publishDueArticles, articleExists } from "./db.js";
+import { execSync } from "child_process";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // ═══════════════════════════════════════════════════════════════
 // CONFIG — All from Railway env vars
 // ═══════════════════════════════════════════════════════════════
 const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY || "";
 const FAL_API_KEY = process.env.FAL_API_KEY || "";
+const GH_PAT = process.env.GH_PAT || "";
 const BUNNY_STORAGE_HOST = "ny.storage.bunnycdn.com";
 const BUNNY_STORAGE_ZONE = "oracle-lover";
 const BUNNY_API_KEY = process.env.BUNNY_STORAGE_KEY || "9369c8ad-563a-4589-83bf139485f1-b5cf-4941";
 const BUNNY_CDN_HOST = "oracle-lover.b-cdn.net";
+const GH_REPO = "peacefulgeek/oracle-lover";
 const AUTO_GEN_ENABLED = process.env.AUTO_GEN_ENABLED === "true";
+
+const ARTICLES_PATH = path.resolve(__dirname, "..", "client", "src", "data", "articles.ts");
 
 // ═══════════════════════════════════════════════════════════════
 // TOPIC POOL — Health & wellness topics for weekly generation
+// Each topic has a title, description, and target herb links
 // ═══════════════════════════════════════════════════════════════
 const TOPIC_POOL = [
   { title: "The Spiritual Dimension of Adaptogens", herbs: ["ashwagandha", "rhodiola", "holy-basil"], desc: "How adaptogenic herbs support the body, energetic and emotional systems. Stress, cortisol, and spiritual clarity." },
@@ -51,7 +62,7 @@ const TOPIC_POOL = [
 ];
 
 // ═══════════════════════════════════════════════════════════════
-// VOICE PROFILE — The Oracle Lover voice
+// VOICE PROFILE — The Oracle Lover / Kalesh voice
 // ═══════════════════════════════════════════════════════════════
 const VOICE_PROMPT = `You are writing as "The Oracle Lover" — an intuitive educator and oracle guide. Voice profile:
 
@@ -121,13 +132,18 @@ async function fetchPaulWagnerUrls(): Promise<Map<string, string>> {
     console.log("[CRON] Fetching paulwagner.com sitemap...");
     const resp = await httpRequest("https://paulwagner.com/sitemap.xml", { method: "GET" });
     if (resp.status === 200) {
+      // Extract all URLs from sitemap
       const urls = resp.data.match(/<loc>([^<]+)<\/loc>/g) || [];
       for (const loc of urls) {
         const url = loc.replace(/<\/?loc>/g, "");
+        // Match /healing/ and /wisdom/ paths
         if (url.includes("/healing/") || url.includes("/wisdom/")) {
+          // Extract the slug from the URL
           const parts = url.split("/").filter(Boolean);
           const slug = parts[parts.length - 1];
-          if (slug) urlMap.set(slug, url);
+          if (slug) {
+            urlMap.set(slug.toLowerCase(), url);
+          }
         }
       }
     }
@@ -139,10 +155,13 @@ async function fetchPaulWagnerUrls(): Promise<Map<string, string>> {
 }
 
 function findHerbUrl(herbSlug: string, urlMap: Map<string, string>): string {
+  // Try exact match first
   if (urlMap.has(herbSlug)) return urlMap.get(herbSlug)!;
+  // Try partial match
   for (const [key, url] of Array.from(urlMap.entries())) {
     if (key.includes(herbSlug) || herbSlug.includes(key)) return url;
   }
+  // Fallback to /wisdom/ path pattern
   return `https://paulwagner.com/wisdom/${herbSlug}`;
 }
 
@@ -201,7 +220,8 @@ Use 3-5 of these voice phrases naturally woven in:
   const result = JSON.parse(resp.data);
   const content = result.content?.[0]?.text || "";
   const slug = slugify(topic.title);
-
+  
+  // Extract first paragraph as excerpt (skip the title)
   const lines = content.split("\n").filter((l: string) => l.trim() && !l.startsWith("#"));
   const excerpt = lines[0]?.substring(0, 200).replace(/\[([^\]]+)\]\([^)]+\)/g, "$1") + "..." || topic.desc;
 
@@ -216,6 +236,7 @@ async function generateHeroImage(title: string): Promise<Buffer> {
 
   const imagePrompt = `A warm, softly lit photograph related to "${title}". Natural herbs, plants, or healing elements arranged on a rustic wooden surface with warm candlelight. Soft bokeh background. No text, no words, no letters. Warm amber and earth tones. Professional food/lifestyle photography style. Shot from slightly above. Shallow depth of field.`;
 
+  // Submit to FAL
   const submitBody = JSON.stringify({
     prompt: imagePrompt,
     image_size: "landscape_16_9",
@@ -235,11 +256,13 @@ async function generateHeroImage(title: string): Promise<Buffer> {
   }
 
   const submitResult = JSON.parse(submitResp.data);
-
+  
+  // Check if we got images directly or need to poll
   let imageUrl = "";
   if (submitResult.images?.[0]?.url) {
     imageUrl = submitResult.images[0].url;
   } else if (submitResult.request_id) {
+    // Poll for result
     const requestId = submitResult.request_id;
     for (let i = 0; i < 30; i++) {
       await sleep(2000);
@@ -253,6 +276,10 @@ async function generateHeroImage(title: string): Promise<Buffer> {
           imageUrl = pollResult.images[0].url;
           break;
         }
+        if (pollResult.status === "COMPLETED" && pollResult.images?.[0]?.url) {
+          imageUrl = pollResult.images[0].url;
+          break;
+        }
       }
     }
   }
@@ -261,6 +288,7 @@ async function generateHeroImage(title: string): Promise<Buffer> {
     throw new Error("Failed to get image URL from FAL.ai");
   }
 
+  // Download the image
   console.log(`[CRON] Downloading generated image...`);
   const imgResp = await httpRequest(imageUrl, { method: "GET" });
   if (!imgResp.buffer) throw new Error("Failed to download image");
@@ -298,7 +326,121 @@ async function uploadToBunny(imageBuffer: Buffer, filename: string): Promise<str
 }
 
 // ═══════════════════════════════════════════════════════════════
-// MAIN: Weekly article generation — writes to MySQL
+// STEP 5: Add article to articles.ts source file
+// ═══════════════════════════════════════════════════════════════
+function addArticleToFile(article: { title: string; content: string; slug: string; excerpt: string; heroImage: string }): void {
+  console.log(`[CRON] Adding article "${article.title}" to articles.ts...`);
+
+  let fileContent = fs.readFileSync(ARTICLES_PATH, "utf-8");
+
+  // Escape backticks and ${} in content for template literal safety
+  const safeContent = article.content.replace(/\\/g, "\\\\").replace(/`/g, "\\`").replace(/\$\{/g, "\\${");
+  const safeExcerpt = article.excerpt.replace(/'/g, "\\'");
+  const safeTitle = article.title.replace(/'/g, "\\'");
+
+  const newArticle = `  {
+    slug: '${article.slug}',
+    title: '${safeTitle}',
+    readingTime: '10 min read',
+    excerpt: '${safeExcerpt}',
+    content: \`${safeContent}\`,
+    heroImage: '${article.heroImage}',
+    status: 'published',
+  },`;
+
+  // Insert before the closing ];
+  fileContent = fileContent.replace(/\n\];/, `,\n${newArticle}\n];`);
+
+  fs.writeFileSync(ARTICLES_PATH, fileContent, "utf-8");
+  console.log(`[CRON] Article added to articles.ts`);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// STEP 6: Commit and push to GitHub
+// ═══════════════════════════════════════════════════════════════
+function pushToGitHub(articleTitle: string): void {
+  console.log(`[CRON] Pushing to GitHub...`);
+  try {
+    const repoDir = path.resolve(__dirname, "..");
+    const opts = { cwd: repoDir, encoding: "utf-8" as const };
+
+    execSync("git add -A", opts);
+    execSync(`git commit -m "Auto-publish: ${articleTitle.replace(/"/g, '\\"')}"`, opts);
+    execSync(`git remote set-url origin https://${GH_PAT}@github.com/${GH_REPO}.git`, opts);
+    execSync("git push origin main", opts);
+    console.log(`[CRON] Pushed to GitHub successfully`);
+  } catch (err) {
+    console.error("[CRON] GitHub push failed:", err);
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// STEP 7: Publish scheduled drafts (existing logic)
+// ═══════════════════════════════════════════════════════════════
+function publishScheduledArticles(): void {
+  const now = new Date();
+  const today = now.toISOString().split("T")[0];
+
+  console.log(`[CRON] ${now.toISOString()} — Checking for scheduled articles to publish...`);
+
+  try {
+    if (!fs.existsSync(ARTICLES_PATH)) {
+      console.log(`[CRON] Articles file not found. Skipping.`);
+      return;
+    }
+
+    let content = fs.readFileSync(ARTICLES_PATH, "utf-8");
+    let publishedCount = 0;
+
+    const draftPattern = /status: 'draft',\s*\n\s*scheduledDate: '(\d{4}-\d{2}-\d{2})',/g;
+    let match;
+    const replacements: Array<{ full: string; date: string }> = [];
+
+    while ((match = draftPattern.exec(content)) !== null) {
+      if (match[1] <= today) {
+        replacements.push({ full: match[0], date: match[1] });
+      }
+    }
+
+    for (const rep of replacements) {
+      content = content.replace(rep.full, "status: 'published',");
+      publishedCount++;
+      console.log(`[CRON] Published draft article scheduled for ${rep.date}`);
+    }
+
+    if (publishedCount > 0) {
+      fs.writeFileSync(ARTICLES_PATH, content, "utf-8");
+      console.log(`[CRON] Published ${publishedCount} scheduled article(s).`);
+      pushToGitHub(`Publish ${publishedCount} scheduled articles`);
+    } else {
+      console.log(`[CRON] No articles due for publishing today (${today}).`);
+    }
+  } catch (err) {
+    console.error(`[CRON] Error during scheduled publish:`, err);
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// STEP 8: Get already-used topics to avoid repeats
+// ═══════════════════════════════════════════════════════════════
+function getUsedSlugs(): Set<string> {
+  const slugs = new Set<string>();
+  try {
+    if (fs.existsSync(ARTICLES_PATH)) {
+      const content = fs.readFileSync(ARTICLES_PATH, "utf-8");
+      const matches = content.match(/slug: '([^']+)'/g) || [];
+      for (const m of matches) {
+        slugs.add(m.replace("slug: '", "").replace("'", ""));
+      }
+    }
+  } catch (err) {
+    console.error("[CRON] Error reading slugs:", err);
+  }
+  return slugs;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// MAIN: Weekly article generation
 // ═══════════════════════════════════════════════════════════════
 async function generateWeeklyArticle(): Promise<void> {
   if (!AUTO_GEN_ENABLED) {
@@ -321,22 +463,17 @@ async function generateWeeklyArticle(): Promise<void> {
   console.log(`[CRON] ═══ Starting weekly health article generation ═══`);
 
   try {
-    // Pick an unused topic by checking DB
-    let topic = null;
-    for (const t of TOPIC_POOL) {
-      const slug = slugify(t.title);
-      const exists = await articleExists(slug);
-      if (!exists) {
-        topic = t;
-        break;
-      }
-    }
+    // Get used slugs to avoid repeats
+    const usedSlugs = getUsedSlugs();
 
-    if (!topic) {
+    // Pick an unused topic
+    const availableTopics = TOPIC_POOL.filter((t) => !usedSlugs.has(slugify(t.title)));
+    if (availableTopics.length === 0) {
       console.log("[CRON] All topics in pool have been used. Skipping.");
       return;
     }
 
+    const topic = availableTopics[0];
     console.log(`[CRON] Selected topic: "${topic.title}"`);
 
     // Step 1: Fetch paulwagner.com sitemap for real URLs
@@ -352,17 +489,20 @@ async function generateWeeklyArticle(): Promise<void> {
     const filename = `${slugify(topic.title)}-${Date.now()}.webp`;
     const heroImageUrl = await uploadToBunny(imageBuffer, filename);
 
-    // Step 5: Insert into MySQL database
-    await insertArticle({
-      slug: article.slug,
-      title: article.title,
-      reading_time: "10 min read",
-      excerpt: article.excerpt,
-      content: article.content,
-      hero_image: heroImageUrl,
-      status: "published",
-      category: "health",
-    });
+    // Step 5: Add to articles.ts
+    addArticleToFile({ ...article, heroImage: heroImageUrl });
+
+    // Step 6: Rebuild (if in production with build tools available)
+    try {
+      const repoDir = path.resolve(__dirname, "..");
+      execSync("pnpm run build", { cwd: repoDir, encoding: "utf-8", timeout: 120000 });
+      console.log("[CRON] Rebuild completed.");
+    } catch (buildErr) {
+      console.error("[CRON] Rebuild failed (may need manual deploy):", buildErr);
+    }
+
+    // Step 7: Push to GitHub
+    pushToGitHub(article.title);
 
     console.log(`[CRON] ═══ Weekly article generation complete: "${article.title}" ═══`);
   } catch (err) {
@@ -374,37 +514,25 @@ async function generateWeeklyArticle(): Promise<void> {
 // EXPORTS — Start all cron jobs
 // ═══════════════════════════════════════════════════════════════
 export function startCronJobs(): void {
-  // Daily at midnight: publish any scheduled drafts in DB
-  cron.schedule("0 0 * * *", async () => {
-    try {
-      const count = await publishDueArticles();
-      if (count > 0) {
-        console.log(`[CRON] Published ${count} scheduled article(s).`);
-      } else {
-        console.log(`[CRON] No articles due for publishing today.`);
-      }
-    } catch (err) {
-      console.error("[CRON] Error publishing scheduled articles:", err);
-    }
+  // Daily at midnight: publish any scheduled drafts
+  cron.schedule("0 0 * * *", () => {
+    publishScheduledArticles();
   });
 
   // Weekly on Tuesdays at 3am: generate 1 new health article
+  // (Tuesday avoids Monday deploy chaos and weekend gaps)
   cron.schedule("0 3 * * 2", () => {
     generateWeeklyArticle();
   });
 
   console.log("[CRON] ═══════════════════════════════════════════════");
   console.log("[CRON] Cron jobs initialized:");
-  console.log("[CRON]   • Daily midnight: publish scheduled drafts (MySQL)");
+  console.log("[CRON]   • Daily midnight: publish scheduled drafts");
   console.log("[CRON]   • Weekly Tuesday 3am: generate new health article");
   console.log("[CRON]   • Auto-gen enabled:", AUTO_GEN_ENABLED);
   console.log("[CRON]   • Start date: July 22, 2026");
   console.log("[CRON] ═══════════════════════════════════════════════");
 
   // Run draft publisher on startup
-  publishDueArticles().then((count) => {
-    if (count > 0) console.log(`[CRON] Startup: published ${count} due article(s).`);
-  }).catch((err) => {
-    console.error("[CRON] Startup publish check failed:", err);
-  });
+  publishScheduledArticles();
 }

@@ -6,8 +6,7 @@ import Layout from "@/components/Layout";
 import SEO from "@/components/SEO";
 import { Link } from "wouter";
 import { motion } from "framer-motion";
-import { useArticles } from "@/hooks/useArticles";
-import { ArticleCardSkeleton } from "@/components/ArticleSkeleton";
+import { articles } from "@/data/articles";
 import { ArrowRight, BookOpen, Compass, Sparkles } from "lucide-react";
 
 const HERO_IMG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663309220512/gmij7LjAnhSeEKhviVH9SQ/hero-sacred-light-23Gw9cKdGiYwbrdJyc4aEn.webp";
@@ -25,6 +24,8 @@ const fadeUp = {
     transition: { delay: i * 0.15, duration: 0.7, ease: "easeOut" as const },
   }),
 };
+
+const recentArticles = articles.filter((a) => !a.status || a.status === 'published' || (a.status === 'draft' && a.scheduledDate && new Date(a.scheduledDate) <= new Date())).slice(0, 6);
 
 const pathways = [
   {
@@ -51,9 +52,6 @@ const pathways = [
 ];
 
 export default function Home() {
-  const { articles, loading } = useArticles();
-  const recentArticles = articles.slice(0, 6);
-
   return (
     <Layout>
       <SEO url="/" />
@@ -332,71 +330,67 @@ export default function Home() {
         </motion.div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
-          {loading ? (
-            [...Array(6)].map((_, i) => <ArticleCardSkeleton key={i} />)
-          ) : (
-            recentArticles.map((article, i) => (
-              <motion.div
-                key={article.slug}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true, margin: "-40px" }}
-                variants={fadeUp}
-                custom={i % 3}
-              >
-                <Link href={`/articles/${article.slug}`} className="block group">
-                  <article className="sacred-card p-6 h-full flex flex-col">
-                    {/* Category tag */}
-                    <div className="mb-4">
-                      <span
-                        className="inline-block px-3 py-1 rounded-full text-[0.65rem] tracking-[0.1em] uppercase"
-                        style={{
-                          fontFamily: "var(--font-body)",
-                          fontWeight: 500,
-                          background: "oklch(0.78 0.14 75 / 0.1)",
-                          color: "oklch(0.65 0.14 70)",
-                        }}
-                      >
-                        {article.slug.includes('tarot') || article.slug.includes('spread') ? 'Practice' : article.slug.includes('jung') || article.slug.includes('campbell') || article.slug.includes('hero') ? 'Philosophy' : 'Foundation'}
-                      </span>
-                    </div>
-
-                    {/* Title */}
-                    <h3
-                      className="text-xl mb-3 transition-colors duration-300 group-hover:text-plum"
-                      style={{ fontFamily: "var(--font-display)", fontWeight: 600, color: "oklch(0.22 0.04 310)", lineHeight: 1.3 }}
+          {recentArticles.map((article, i) => (
+            <motion.div
+              key={article.slug}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-40px" }}
+              variants={fadeUp}
+              custom={i % 3}
+            >
+              <Link href={`/articles/${article.slug}`} className="block group">
+                <article className="sacred-card p-6 h-full flex flex-col">
+                  {/* Category tag */}
+                  <div className="mb-4">
+                    <span
+                      className="inline-block px-3 py-1 rounded-full text-[0.65rem] tracking-[0.1em] uppercase"
+                      style={{
+                        fontFamily: "var(--font-body)",
+                        fontWeight: 500,
+                        background: "oklch(0.78 0.14 75 / 0.1)",
+                        color: "oklch(0.65 0.14 70)",
+                      }}
                     >
-                      {article.title}
-                    </h3>
+                      {article.slug.includes('tarot') || article.slug.includes('spread') ? 'Practice' : article.slug.includes('jung') || article.slug.includes('campbell') || article.slug.includes('hero') ? 'Philosophy' : 'Foundation'}
+                    </span>
+                  </div>
 
-                    {/* Excerpt */}
-                    <p
-                      className="text-sm flex-1 mb-4"
-                      style={{ fontFamily: "var(--font-body)", color: "oklch(0.50 0.04 310)", lineHeight: 1.7 }}
+                  {/* Title */}
+                  <h3
+                    className="text-xl mb-3 transition-colors duration-300 group-hover:text-plum"
+                    style={{ fontFamily: "var(--font-display)", fontWeight: 600, color: "oklch(0.22 0.04 310)", lineHeight: 1.3 }}
+                  >
+                    {article.title}
+                  </h3>
+
+                  {/* Excerpt */}
+                  <p
+                    className="text-sm flex-1 mb-4"
+                    style={{ fontFamily: "var(--font-body)", color: "oklch(0.50 0.04 310)", lineHeight: 1.7 }}
+                  >
+                    {article.excerpt}
+                  </p>
+
+                  {/* Meta */}
+                  <div className="flex items-center justify-between pt-4" style={{ borderTop: "1px solid oklch(0.88 0.03 75)" }}>
+                    <span
+                      className="text-xs"
+                      style={{ fontFamily: "var(--font-body)", color: "oklch(0.60 0.04 310)" }}
                     >
-                      {article.excerpt}
-                    </p>
-
-                    {/* Meta */}
-                    <div className="flex items-center justify-between pt-4" style={{ borderTop: "1px solid oklch(0.88 0.03 75)" }}>
-                      <span
-                        className="text-xs"
-                        style={{ fontFamily: "var(--font-body)", color: "oklch(0.60 0.04 310)" }}
-                      >
-                        {article.readingTime?.replace(' min read', '')} min read
-                      </span>
-                      <span
-                        className="inline-flex items-center gap-1 text-xs tracking-wide transition-all duration-300 group-hover:gap-2"
-                        style={{ fontFamily: "var(--font-body)", fontWeight: 500, color: "oklch(0.78 0.14 75)" }}
-                      >
-                        Read <ArrowRight size={12} />
-                      </span>
-                    </div>
-                  </article>
-                </Link>
-              </motion.div>
-            ))
-          )}
+                      {article.readingTime?.replace(' min read', '')} min read
+                    </span>
+                    <span
+                      className="inline-flex items-center gap-1 text-xs tracking-wide transition-all duration-300 group-hover:gap-2"
+                      style={{ fontFamily: "var(--font-body)", fontWeight: 500, color: "oklch(0.78 0.14 75)" }}
+                    >
+                      Read <ArrowRight size={12} />
+                    </span>
+                  </div>
+                </article>
+              </Link>
+            </motion.div>
+          ))}
         </div>
       </section>
 
