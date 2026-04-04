@@ -2,6 +2,7 @@ import express from "express";
 import { createServer } from "http";
 import path from "path";
 import { fileURLToPath } from "url";
+import { startCronJobs } from "./cron.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -18,10 +19,18 @@ async function startServer() {
 
   app.use(express.static(staticPath));
 
+  // Health check endpoint for Railway
+  app.get("/api/health", (_req, res) => {
+    res.json({ status: "ok", timestamp: new Date().toISOString() });
+  });
+
   // Handle client-side routing - serve index.html for all routes
   app.get("*", (_req, res) => {
     res.sendFile(path.join(staticPath, "index.html"));
   });
+
+  // Start cron jobs (auto-publish scheduled articles)
+  startCronJobs();
 
   const port = process.env.PORT || 3000;
 
