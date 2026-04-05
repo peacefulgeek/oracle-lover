@@ -47,4 +47,4 @@
 - [x] Remove static @/data/articles imports from all pages
 - [x] Railway MySQL has 29 articles with full body content
 - [x] Cron jobs configured (daily publish + weekly health article gen)
-- [ ] Push updated code to GitHub (susandrurylove/susan-website)
+- [x] Push updated code to GitHub (peacefulgeek/oracle-lover)
