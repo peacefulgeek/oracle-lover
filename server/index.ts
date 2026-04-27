@@ -98,6 +98,16 @@ async function startServer() {
 
   app.use(express.json());
 
+  // ── WWW → NON-WWW 301 REDIRECT ─────────────────────────────
+  app.use((req, res, next) => {
+    const host = req.headers.host || "";
+    if (host.startsWith("www.")) {
+      const newHost = host.replace(/^www\./, "");
+      return res.redirect(301, `${req.protocol}://${newHost}${req.originalUrl}`);
+    }
+    next();
+  });
+
   // Init DB table
   await initArticlesTable();
 

@@ -48,3 +48,6 @@
 - [x] Railway MySQL has 29 articles with full body content
 - [x] Cron jobs configured (daily publish + weekly health article gen)
 - [x] Push updated code to GitHub (peacefulgeek/oracle-lover)
+
+## SEO Fixes
+- [x] Add server-side 301 redirect from www to non-www
